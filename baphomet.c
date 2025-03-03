@@ -10,7 +10,6 @@
 
 /* macros */
 #define SDL_MAIN_USE_CALLBACKS 	TRUE
-#define BAPHOMET_ALLOW_DEBUG	TRUE
 
 /* includes */
 #include <stdarg.h>
@@ -21,6 +20,10 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+
+/* Core */
+//#include "ring.h"
+//#include "draw.h"
 
 /* variables */
 static SDL_Window* window = NULL;

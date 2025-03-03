@@ -12,7 +12,7 @@ LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -
 
 # Flags
 CFLAGS = ${INCS}
-LDFLAGS = ${LIBS}
+LDFLAGS = ${LIBS} # LD_CONFIG Manually for SDL3
 
 # Compiler & Platform/Architecture
 CC = gcc

@@ -4,17 +4,17 @@
 
 */
 
-/* General Program */
+/* Extra Program */
 #include <X11/XF86keysym.h>
 
-/* Core */
-//#include "ring.h"
-//#include "draw.h"
+/* System Macros */
+
+#define BAPHOMET_ALLOW_DEBUG  TRUE
 
 /* ///////////////////////////// PROJECT CONFIG ///////////////////////////// */
 
 const char* program_name                         = "Bael - 01";
-const char* program_identifier                   = "com.example.cereal";
+const char* program_identifier                   = "com.example.bael";
 
 
 /* ////////////////////////////////// SDL3 ////////////////////////////////// */
