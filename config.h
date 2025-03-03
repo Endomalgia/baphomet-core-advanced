@@ -8,8 +8,8 @@
 #include <X11/XF86keysym.h>
 
 /* Core */
-#include "ring.h"
-#include "draw.h"
+//#include "ring.h"
+//#include "draw.h"
 
 /* ///////////////////////////// PROJECT CONFIG ///////////////////////////// */
 
