@@ -27,16 +27,11 @@
 #define EVENT_DESTROY     4
 
 /* types */
-
 typedef struct {
-  int id;       // Assigned in pre-defined order
-  void* oid;    // Pointer to self
-  SDL_AppResult (*event_create)(void* object);
-  SDL_AppResult (*event_step)(void* object, double delta_time);
-  SDL_AppResult (*event_draw)(void* object, double delta_time);
-  SDL_AppResult (*event_erase)(void* object);
-  SDL_AppResult (*event_destroy)(void* object);
-	void*  data;  
+  int           id;     // Assigned in pre-defined order
+  void*         oid;    // Pointer to self
+  SDL_AppResult (*event_script)(Sin* sin, uint8_t event_flag);
+	void*         data;
 } Sin;
 
 /* variables */
@@ -45,28 +40,26 @@ Sin** RING = NULL;
 double int RING_LENGTH = 0;
 
 /* debug */
-Sin** ring_get();
+Sin** debug_ring_get(); // Probably shouldnt be used
 
 /* ring management */
-error_t ring_init();
-error_t ring_resize(int num_sins);
-error_t ring_refactor();
-error_t ring_allocate() 
+error_t ring_init();    // Only exists for convenience
+error_t ring_buffer_element(int id, int ptr_widths);  // For hardcoding bs
+error_t ring_cleanup();
 
-
-error_t ring_append_sin(Sin* sin);
-error_t ring_replace_sin();
+/* sin manipulation */
+error_t ring_append_sins(Sin** sins, int num);
 error_t ring_duplicate_sin();
 error_t ring_remove_sin();
 Sin* ring_get_sin_by_id(int id);
 Sin* ring_get_sin(int index);
 
 /* event execution */
-error_t ring_execute_event(uint8_t event, uint8_t prio_flags);
+error_t ring_execute_event(uint8_t event);
 
 /* sin (object) commands */
-error_t ring_set_acheron(Sin* sin, uint8_t prio_flags);
-uint8_t prio_flags sin_get_acheron(Sin* sin);
+//error_t ring_set_acheron(Sin* sin, int prio_flags);
+//uint8_t prio_flags sin_get_acheron(Sin* sin);
 error_t sin_execute_event(Sin* sin, uint8_t event);      // Warning DO NOT PREMATURELY EXECUTE THE DELETE EVENT
 
 #endif

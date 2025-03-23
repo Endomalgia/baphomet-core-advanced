@@ -22,7 +22,7 @@
 #include <SDL3/SDL_main.h>
 
 /* Core */
-//#include "ring.h"
+#include "ring.h"
 //#include "draw.h"
 
 /* variables */
