@@ -9,27 +9,27 @@
 */
 
 /* macros */
-#define SDL_MAIN_USE_CALLBACKS 	TRUE
+// NONE YET
 
 /* includes */
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <argp.h>
 #include <math.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-
-/* Core */
+/* core includes */
+#include "gfx.h"
 #include "ring.h"
-//#include "draw.h"
 
 /* variables */
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
+//static SDL_Window* window = NULL;
+//static SDL_Renderer* renderer = NULL;
 
-/* configuration, following dwm, allows acess to above variables */
+/* configuration, following dwm, allows access to above variables */
 #include "config.h"
 
 /* functions */
@@ -58,54 +58,47 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state) {
 }
 
 struct argp argp = { argp_program_options, parse_opt, argp_program_args_desc, argp_program_desc };
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 	struct commandline_args cmd_args = {.debug = 0, .quiet = 0};
 
 	// Parse Command Arguments
 	argp_parse(&argp, argc, argv, 0, 0, &cmd_args);
 	(cmd_args.debug) ? fprintf(stderr,"\tDEBUG ENABLED:\n"):0;
 
-	SDL_SetAppMetadata(program_name, argp_program_version, program_identifier);
+	if (!glfwInit())
+		printf("[E]\t In main(): Failed to initialize glfw :("); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
 
-	if (!SDL_Init(SDL_INIT_VIDEO))
-		//log("SDL_Init( %x )",  __LINE__, __FILE__, SDL_INIT_VIDEO);
-		goto SDL_ERROR;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MINOR);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	#endif
 
-	if (!SDL_CreateWindowAndRenderer("CORE/renderer/clear", default_window_width, default_window_height, 0, &window, &renderer))
-		goto SDL_ERROR;
+	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
+	
+	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
-	return SDL_APP_CONTINUE;
+	double PROGRAM_TIME = glfwGetTime();
+	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
+		double DELTA_TIME = PROGRAM_TIME - glfwGetTime();
 
-SDL_ERROR:
-	SDL_Log("\n%s\n", SDL_GetError());
-	exit(SDL_APP_FAILURE);
-}
+		glClearColor(0.7176f, 0.1098f, 0.1098f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
+		glfwSwapBuffers(gfxGetActiveWindow());
+		glfwPollEvents();
 
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event *event) {
-	if (event->type == SDL_EVENT_QUIT)
-		return SDL_APP_SUCCESS;
-	return SDL_APP_CONTINUE;
-}
+		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 
-SDL_AppResult SDL_AppIterate(void* appstate) {
+      glfwSetWindowShouldClose(gfxGetActiveWindow(), GL_TRUE);
+    }
+	}
+	
+	glfwTerminate();
 
-	const double now = ((double)SDL_GetTicks()) / 1000.0;
-	const float red = (float) (0.5 + 0.5 * SDL_sin(now));
-	const float gre = (float) (0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 2/3));
-	const float blu = (float) (0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 4/3));
-
-	SDL_SetRenderDrawColorFloat(renderer, red, gre, blu, SDL_ALPHA_OPAQUE_FLOAT);
-
-	SDL_RenderClear(renderer);
-
-	SDL_RenderPresent(renderer);
-
-	return SDL_APP_CONTINUE;
-}
-
-void SDL_AppQuit(void* appstate, SDL_AppResult result) {
-	// DONE AUTOMATICALLY, CONFIGURE IF DESIRED
+ERROR:
+	// None yet :3
 }
 
 /* THIS WOULD BE NICE

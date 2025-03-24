@@ -7,7 +7,7 @@ VERSION = 0.1
 NAME = baphomet
 
 # Includes and Libs
-INCS = -Iinclude -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/freetype2 
+INCS = -Iinclude -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/freetype2 -I./
 LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -ldl -logg -lvorbis -lportaudio -lpthread -lSDL3
 
 # Flags
@@ -21,10 +21,9 @@ ARCHITECTURE = $(shell uname -m)
 
 # Directiories containing various types of file
 BUILD_DIR := ./build
-SRC_DIRS := ./assets/objects ./engine
 
 # Files to manipulate
-SRC := baphomet.c $(shell find $(SRC_DIRS) -name '*.c')
+SRC := baphomet.c ring.c gfx.c glad.c
 OBJ := $(SRC:%=$(BUILD_DIR)/%.o)
 
 all: options ${SO} build
