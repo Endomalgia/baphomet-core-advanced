@@ -1,7 +1,7 @@
 # Baphomet
 
 # Version
-VERSION = 0.1
+VERSION = 0.2
 
 # Project Name
 NAME = baphomet

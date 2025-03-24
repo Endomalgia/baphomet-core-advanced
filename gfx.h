@@ -3,10 +3,11 @@
 
 /*
 *	gfx.h
-*	Created: xxxx-xx-xx
-*	Description:
+*	Created: homestuck day
+*	Description: Graphical oddities and curios alike :3
 */
 
+/* includes */
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,9 +19,31 @@
 
 /* macros */
 
+/* types */
+typedef struct {
+	unsigned int texture;
+	int type;
+} GFXtexture;
+
+typedef struct {
+	unsigned int* 	shader;
+	unsigned int	program;
+} GFXshader;
+
 /* window */
 GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title); // Implement monitor stuff later maybe? Open in a certain monitor by default? Idk??
 GLFWwindow* gfxGetActiveWindow();
+
+/* draw commands */
+void gfxDrawClear(float r, float g, float b, float a);
+void gfxDrawMode(GLenum mode);
+void gfxQuickDrawSprite();
+void gfxDrawMesh();
+void gfxSetTexture(GFXtexture texture);
+void gfxSetShader();
+void gfxGetShader();
+void gfxSetBlendmode();
+
 
 /* default callbacks */
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window);

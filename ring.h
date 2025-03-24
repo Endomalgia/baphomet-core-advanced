@@ -3,28 +3,17 @@
 
 /*
 *	ring.h
-*	Created: xxxx-xx-xx
-*	Description:
-*		ring.h is a loose implimentation of a somewhat hodgepodge system for
-*   executing 'sin' scripts in order. The idea is that every available object
-*   will be created and listed in a large include file which "room sins"
-*   directly running out of the mainloop can pull from to make interesting
-*   things happen :3. I think it may be a good idea to have a python
-*   preprocessor make this happen? I could write it all manually by defining
-*   name_event_xxx functions with an object definition at the end of the file
-*   all included in said larger include; However, that is like atleast 5 seconds
-*   of work and like... come on.. thats unacceptable. NOTE: Global variables
-*   are shared among object instances. Only the 'malloc'ed data is local
+*	Created: a really long time ago
+*	Description: "We don't want to reinvent the wheel" Hehe :3c
 */
 
+/* includes */
 #include <errno.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 
 /* macros */
-
-// user events
 #define EVENT_CREATE      0
 #define EVENT_STEP        1
 #define EVENT_DRAW        2

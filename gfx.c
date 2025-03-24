@@ -15,6 +15,7 @@ GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 
 	// TODO: what in the goddamn fuck is this notation
 	// (I made this note ages ago and now its just a beautiful artifact. Its called a typecast hun)
+	// ((I said this before spending the next several real life hours crying over a linking error before realizing that I had forgotten to add glad.c to the project. I will be nicer to my past self from now on I am sorry))
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
 		printf("Failed to initialize glad :(");
 	}
