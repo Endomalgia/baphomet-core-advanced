@@ -5,7 +5,12 @@
 *	gfx.h
 *	Created: homestuck day
 *	Description: Graphical oddities and curios alike :3
+*	Shout out to https://github.com/nothings/stb
+* and the lovely https://learnopengl.com
 */
+
+/* defines */
+
 
 /* includes */
 #include <stdarg.h>
@@ -16,6 +21,7 @@
 #include <math.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
 
 /* macros */
 

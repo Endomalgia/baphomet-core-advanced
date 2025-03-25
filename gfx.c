@@ -1,5 +1,9 @@
 #include "gfx.h"
 
+/* stb image funcions */
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 /* variables */
 GLFWwindow* ACTIVE_WINDOW = NULL;
 
@@ -19,6 +23,8 @@ GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
 		printf("Failed to initialize glad :(");
 	}
+
+	fprintf(stderr, "RESULT OF FUNCTION: %x\n",stbi_is_16_bit("assets/sprites/baphomet.png"));
 
 	ACTIVE_WINDOW = window;
 	return ACTIVE_WINDOW;
