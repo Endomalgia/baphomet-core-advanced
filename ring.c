@@ -4,16 +4,16 @@
 Sin** RING = NULL;
 long RING_LENGTH = 0;
 
-Sin** DebugRingGet() {
+Sin** ringGetDebug() {
 	return RING;
 }
 
-int RingInit() {
+int ringInit() {
 	RING = (Sin**)malloc(sizeof(void*));
 	return (RING == NULL);
 }
 
-int RingBufferElement(int id, int ptr_widths) {
+int ringBufferElement(int id, int ptr_widths) {
 	RING = (Sin**)realloc(RING, sizeof(void*) * (RING_LENGTH + ptr_widths));
 	for (int y=RING_LENGTH;y>id;y--) {
 		RING[y]->id = y + ptr_widths;
@@ -24,12 +24,12 @@ int RingBufferElement(int id, int ptr_widths) {
 	return (RING == NULL);
 }
 
-int RingCleanup() {
+int ringCleanup() {
 	free(RING);
 	return 0;
 }
 
-int RingAppendSins(Sin** sins, int num) {
+int ringAppendSins(Sin** sins, int num) {
 	RING = (Sin**)realloc(RING, sizeof(void*) * (RING_LENGTH + num + 1));
 	//memcpy(&RING[RING_LENGTH], &sins, sizeof(void*) * num); // Consider using memcpy :3
 	for (int z=0;z<num;z++) {
@@ -41,16 +41,16 @@ int RingAppendSins(Sin** sins, int num) {
 	return (RING == NULL);
 }
 
-int RingReplaceSin() {
+int ringReplaceSin() {
 	// TODO (don't really need this right now. Same with other ID priority based stuff)
 }
 
-int RingDuplicateSins() {
+int ringDuplicateSins() {
 	// TODO (This function keeps the object data, thats why its cool :3)
 }
 
-int RingPurgeSin(int id) { // Inefficient, should allow multiple deletions at once like append.
-	SinExecuteEvent(RING[id], EVENT_DESTROY);
+int ringPurgeSin(int id) { // Inefficient, should allow multiple deletions at once like append.
+	sinExecuteEvent(RING[id], EVENT_DESTROY);
 	for (int g=id;g<RING_LENGTH;g++) {
 		RING[g] = RING[g+1]; // Im sure this could also be memcpy-d
 		RING[g]->id = g;
@@ -60,16 +60,16 @@ int RingPurgeSin(int id) { // Inefficient, should allow multiple deletions at on
 	return (RING == NULL);
 }
 
-Sin* RingGetSinByID(int id) {
+Sin* ringGetSinByID(int id) {
 	return RING[id];
 }
 
-int RingExecuteEvent(uint8_t event) {
+int ringExecuteEvent(uint8_t event) {
 	for (int j=0;j<=RING_LENGTH;j++) {
-		SinExecuteEvent(RING[j],event); // Very suprising I know
+		sinExecuteEvent(RING[j],event); // Very suprising I know
 	}
 }
 
-int SinExecuteEvent(Sin* sin, uint8_t event) {
+int sinExecuteEvent(Sin* sin, uint8_t event) {
 	sin->event_script(sin, event);
 }

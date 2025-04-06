@@ -29,26 +29,26 @@ typedef struct {
 } Sin;
 
 /* debug */
-Sin** DebugRingGet(); // Probably shouldnt be used
+Sin** ringGetDebug(); // Probably shouldnt be used
 
 /* ring management */
-int RingInit();    // Only exists for convenience CHANGE
-int RingBufferElement(int id, int ptr_widths);  // For hardcoding bs
-int RingCleanup();
+int ringInit();    // Only exists for convenience CHANGE
+int ringBufferElement(int id, int ptr_widths);  // For hardcoding bs
+int ringCleanup();
 
 /* sin manipulation */
-int RingAppendSins(Sin** sins, int num);
-int RingReplaceSin();
-int RingDuplicateSins();
-int RingPurgeSin();
-Sin* RingGetSinByID(int id);
+int ringAppendSins(Sin** sins, int num);
+int ringReplaceSin();
+int ringDuplicateSins();
+int ringPurgeSin();
+Sin* ringGetSinByID(int id);
 
 /* event execution */
-int RingExecuteEvent(uint8_t event);
+int ringExecuteEvent(uint8_t event);
 
 /* sin (object) commands */
 //error_t RingSetAcheron(Sin* sin, int prio_flags);
 //uint8_t prio_flags SinGetAcheron(Sin* sin);
-int SinExecuteEvent(Sin* sin, uint8_t event);      // Warning DO NOT PREMATURELY EXECUTE THE DELETE EVENT
+int sinExecuteEvent(Sin* sin, uint8_t event);      // Warning DO NOT PREMATURELY EXECUTE THE DELETE EVENT
 
 #endif

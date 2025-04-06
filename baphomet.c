@@ -22,6 +22,7 @@
 #include <GLFW/glfw3.h>
 
 /* core includes */
+#include "util.h"
 #include "gfx.h"
 #include "ring.h"
 
@@ -76,8 +77,14 @@ int main(int argc, char* argv[]) {
 	#endif
 
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
-	
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
+
+	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/default.vsh","assets/shaders/default.fsh");
+	gfxSetShader(&default_shader);
+
+  GFXmesh mesh = gfxGenerateTri(1.0f, 1.0f);
+
+  glUseProgram(gfxGetShader()->program);
 
 	double PROGRAM_TIME = glfwGetTime();
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
@@ -86,11 +93,14 @@ int main(int argc, char* argv[]) {
 		glClearColor(0.7176f, 0.1098f, 0.1098f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		gfxDrawMesh(&mesh);
+
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())/2.0f-0.5f, cos(glfwGetTime())/2.0f-0.5f);
+
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
 
 		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-
       glfwSetWindowShouldClose(gfxGetActiveWindow(), GL_TRUE);
     }
 	}
@@ -99,6 +109,7 @@ int main(int argc, char* argv[]) {
 
 ERROR:
 	// None yet :3
+	return 0;
 }
 
 /* THIS WOULD BE NICE

@@ -23,13 +23,15 @@
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 
+#include "util.h"
+
 /* macros */
 
 /* vertex formats*/
+#define VERTEX_FORMAT_XYZ	0x0
 #define VERTEX_FORMAT_UV	0x1 << 0
 #define VERTEX_FORMAT_RBG	0x1 << 1
 #define VERTEX_FORMAT_ALPHA	0x1 << 2
-
 
 /* types */
 typedef struct {
@@ -44,9 +46,8 @@ typedef struct {
 } GFXmesh;
 
 typedef struct {
-	unsigned int* 	shader;
-	unsigned int	program;
-} GFXshader;
+	unsigned int program;
+} GFXshader;	// More things may be added to this, just typedef to int if otherwise.
 
 typedef unsigned int GFXsfrag; 
 
@@ -58,22 +59,28 @@ GLFWwindow* gfxGetActiveWindow();
 void gfxDrawClear(float r, float g, float b, float a);
 void gfxDrawMode(GLenum mode);
 void gfxQuickDrawSprite();
-void gfxDrawMesh();
-void gfxSetTexture(GFXtexture texture);
-void gfxSetShader();
-void gfxGetShader();
+void gfxDrawMesh(GFXmesh* mesh);
+void gfxSetTexture(GFXtexture* texture);
 void gfxSetBlendmode();
 
-/* mesh primitives */
+
+
+/* mesh primitives */ 
 GFXmesh gfxMeshStart(int format);
-void gfxMeshAddVertices(GFXmesh mesh, GLenum usage_mode, float* vertices, size_t nv, int* indices, size_t ni);
-void gfxMeshFinish(GFXmesh mesh);
+void gfxMeshAddVertices(GFXmesh* mesh, GLenum usage_mode, float* vertices, size_t nv, int* indices, size_t ni);
+void gfxMeshFinish(GFXmesh* mesh);
+GFXmesh gfxGenerateTri(float b, float h);
 GFXmesh gfxGenerateRect(float w, float h);
 GFXmesh gfxGenerateCirc(float r, float subdiv);
 
+
 /* shaders */
-GFXshader gfxCreateShader(GFXsfrag* fragments); 
-GFXsfrag gfxBuildShaderFragment(char* filepath, int type);
+void gfxSetShader(GFXshader* shader);
+GFXshader* gfxGetShader();
+GFXshader gfxQuickCreateShader(char* vshader_fp, char* fshader_fp);
+GFXshader gfxCreateShader(GFXsfrag* fragments, int n_frags); 
+GFXsfrag gfxBuildShaderFragment(char* filepath, GLenum shader_type);
+void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y); // TODO
 
 /* default callbacks */
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window);
