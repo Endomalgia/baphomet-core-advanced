@@ -33,6 +33,10 @@
 /* configuration, following dwm, allows access to above variables */
 #include "config.h"
 
+/* function defines (idk what its called) */
+static void err(char* error_text, int n, ...);
+void _DEFAULT_GLFW_ERROR_CALLBACK(int error, const char* desc);
+
 /* functions */
 
 struct commandline_args {int debug, quiet; };
@@ -106,23 +110,17 @@ int main(int argc, char* argv[]) {
 	}
 	
 	glfwTerminate();
-
-ERROR:
-	// None yet :3
 	return 0;
 }
 
-/* THIS WOULD BE NICE
-static error_t log(char* error_text, int line_mac, int file_mac, ...) {
-	#ifndef BAPHOMET_ALLOW_DEBUG
-		return 0;
-	#endif
+static void err(char* error_text, int n, ...) {
+	char output_log[512];
+	sprintf(output_log, error_log_format, error_text, glGetError());
+	fprintf(stderr, "%s", output_log);
+}
 
-	va_list log_valist
-
-
-
-	va_start(log_valist, num)
-
-
-}*/
+void _DEFAULT_GLFW_ERROR_CALLBACK(int error, const char* desc) {
+	char* err_str;
+	sprintf(err_str, "%d", error);
+	err("GLFW Error Callback Triggered", 2, "error code", err_str, "desc", desc);
+}

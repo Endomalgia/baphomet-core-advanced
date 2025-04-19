@@ -63,8 +63,6 @@ void gfxDrawMesh(GFXmesh* mesh);
 void gfxSetTexture(GFXtexture* texture);
 void gfxSetBlendmode();
 
-
-
 /* mesh primitives */ 
 GFXmesh gfxMeshStart(int format);
 void gfxMeshAddVertices(GFXmesh* mesh, GLenum usage_mode, float* vertices, size_t nv, int* indices, size_t ni);
@@ -72,7 +70,6 @@ void gfxMeshFinish(GFXmesh* mesh);
 GFXmesh gfxGenerateTri(float b, float h);
 GFXmesh gfxGenerateRect(float w, float h);
 GFXmesh gfxGenerateCirc(float r, float subdiv);
-
 
 /* shaders */
 void gfxSetShader(GFXshader* shader);

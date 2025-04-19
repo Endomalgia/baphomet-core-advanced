@@ -19,16 +19,6 @@
 const char* program_name                         = "Bael - 01";
 const char* program_identifier                   = "com.example.bael";
 
-
-/* ////////////////////////////////// SDL3 ////////////////////////////////// */
-
-/* General */
-
-
-/* Window */
-//static const uint default_window_width           = 640;
-//static const uint default_window_height          = 480;
-
 /* ////////////////////////////// COMMAND LINE ////////////////////////////// */
 
 const char* argp_program_bug_address             = "<autumn.hazel91@gmail.com>";
@@ -51,6 +41,17 @@ static struct argp_option argp_program_options[] = {
 static const uint default_window_width        = 640;
 static const uint default_window_height       = 480;
 static const char default_window_name[]       = "Test!";
+
+/* //////////////////////////////// BAPHOMET //////////////////////////////// */
+
+static char* error_log_format = "\n[E] ERROR DETECTED \n \
+  \t Identifier: %s \n \
+  \t glGetError: %x \n \
+  \t Additional: \n \
+  %S \n \
+  END MESSAGE\n\0";
+
+static char* error_additional_line_format = "\t%s : %s\n\0";
 
 /* ///////////////////////////// GLFW  KEYBINDS ///////////////////////////// */
 
