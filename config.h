@@ -14,12 +14,12 @@
 
 #define BAPHOMET_ALLOW_DEBUG  TRUE
 
-/* ///////////////////////////// PROJECT CONFIG ///////////////////////////// */
+/* //////////////////////////// PROJECT CONFIG ///////////////////////////// */
 
 const char* program_name                         = "Bael - 01";
 const char* program_identifier                   = "com.example.bael";
 
-/* ////////////////////////////// COMMAND LINE ////////////////////////////// */
+/* ///////////////////////////// COMMAND LINE ////////////////////////////// */
 
 const char* argp_program_bug_address             = "<autumn.hazel91@gmail.com>";
 const char* argp_program_version                 = "baphomet v0.0.0a 'Bael'"; // Linear order from the lesser key of solomon
@@ -31,18 +31,22 @@ static struct argp_option argp_program_options[] = {
   {"quiet",     'q',  0,  0,  "Produce no output"},
   { 0 }};
 
-/* ////////////////////////////////// GLFW ////////////////////////////////// */
+/* //////////////////////////// GLFW and OPENGL //////////////////////////// */
 /* General */
 #define GLFW_VERSION_MAJOR 3
 #define GLFW_VERSION_MINOR 3
 #define GLFW_PROFILE GLFW_OPENGL_CORE_PROFILE
+
+/* Graphics Defaults */
+#define DEFAULT_TEXTURE_WRAP    GL_REPEAT
+#define DEFAULT_TEXTURE_FILTER  GL_LINEAR
 
 /* Window */
 static const uint default_window_width        = 640;
 static const uint default_window_height       = 480;
 static const char default_window_name[]       = "Test!";
 
-/* //////////////////////////////// BAPHOMET //////////////////////////////// */
+/* /////////////////////////////// BAPHOMET //////////////////////////////// */
 
 static char* error_log_format = "\n[E] ERROR DETECTED \n \
   \t Identifier: %s \n \
@@ -53,7 +57,7 @@ static char* error_log_format = "\n[E] ERROR DETECTED \n \
 
 static char* error_additional_line_format = "\t%s : %s\n\0";
 
-/* ///////////////////////////// GLFW  KEYBINDS ///////////////////////////// */
+/* //////////////////////////// GLFW KEYBINDS ///////////////////////////// */
 
 #define VK_UNKNOWN -1
 #define VK_SPACE 32

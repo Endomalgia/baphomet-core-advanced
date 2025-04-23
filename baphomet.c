@@ -83,10 +83,13 @@ int main(int argc, char* argv[]) {
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
-	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/default.vsh","assets/shaders/default.fsh");
+	GFXtexture tex = gfxLoadTexture("assets/sprites/baphomet.png", GL_RGBA);
+	gfxSetTexture(&tex);
+
+	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
 
-  GFXmesh mesh = gfxGenerateTri(1.0f, 1.0f);
+  GFXmesh mesh = gfxGenerateRect(1.0f, 1.0f);
 
   glUseProgram(gfxGetShader()->program);
 
@@ -99,7 +102,7 @@ int main(int argc, char* argv[]) {
 
 		gfxDrawMesh(&mesh);
 
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())/2.0f-0.5f, cos(glfwGetTime())/2.0f-0.5f);
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())/2.0f, cos(glfwGetTime())/2.0f);
 
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();

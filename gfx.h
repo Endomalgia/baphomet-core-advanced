@@ -30,16 +30,25 @@
 /* vertex formats*/
 #define VERTEX_FORMAT_XYZ	0x0
 #define VERTEX_FORMAT_UV	0x1 << 0
-#define VERTEX_FORMAT_RBG	0x1 << 1
+#define VERTEX_FORMAT_RGB	0x1 << 1
 #define VERTEX_FORMAT_ALPHA	0x1 << 2
 
 /* types */
 typedef struct {
 	unsigned int texture;
-	int type;
+	int width;
+	int height;
+	int n_channels;
 } GFXtexture;
 
 typedef struct {
+	unsigned int x;
+	unsigned int y;
+	unsigned int width;
+	unsigned int height;
+} GFXsprite;	// Part of a texture
+
+typedef struct {	// Put stride somewhere in here?
 	unsigned int vao;
 	unsigned int elements;
 	int 		 format;
@@ -49,7 +58,7 @@ typedef struct {
 	unsigned int program;
 } GFXshader;	// More things may be added to this, just typedef to int if otherwise.
 
-typedef unsigned int GFXsfrag; 
+typedef unsigned int GFXsfrag;
 
 /* window */
 GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title); // Implement monitor stuff later maybe? Open in a certain monitor by default? Idk??
@@ -70,6 +79,10 @@ void gfxMeshFinish(GFXmesh* mesh);
 GFXmesh gfxGenerateTri(float b, float h);
 GFXmesh gfxGenerateRect(float w, float h);
 GFXmesh gfxGenerateCirc(float r, float subdiv);
+
+/* textures */
+GFXtexture gfxLoadTexture(char* filepath, GLint format);
+void gfxUnloadTexture(GFXtexture* texture);
 
 /* shaders */
 void gfxSetShader(GFXshader* shader);

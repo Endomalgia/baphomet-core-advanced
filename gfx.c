@@ -31,6 +31,10 @@ GLFWwindow* gfxGetActiveWindow() {
 	return ACTIVE_WINDOW;
 }
 
+void gfxSetTexture(GFXtexture* tex) {
+	glBindTexture(GL_TEXTURE_2D, tex->texture);
+}
+
 void gfxDrawMesh(GFXmesh* mesh) {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->elements, GL_UNSIGNED_INT, 0);
@@ -45,7 +49,7 @@ GFXmesh gfxMeshStart(int format) {
 
 void gfxMeshAddVertices(GFXmesh* mesh, GLenum usage_mode, float* vertices, size_t nv, int* indices, size_t ni) {
 	unsigned int vbo, ebo, nelem;
-	nelem = 3 + (mesh->format&VERTEX_FORMAT_UV)*2 + (mesh->format&VERTEX_FORMAT_RBG)*3 + (mesh->format&VERTEX_FORMAT_ALPHA); // Fight me cowards
+	nelem = 3 + !!(mesh->format&VERTEX_FORMAT_UV)*2 + !!(mesh->format&VERTEX_FORMAT_RGB)*3 + !!(mesh->format&VERTEX_FORMAT_ALPHA); // Fight me cowards
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nv * nelem, vertices, usage_mode);
@@ -56,26 +60,36 @@ void gfxMeshAddVertices(GFXmesh* mesh, GLenum usage_mode, float* vertices, size_
 }
 
 void gfxMeshFinish(GFXmesh* mesh) {
-	unsigned int stride = 3 + (mesh->format&VERTEX_FORMAT_UV)*2 + (mesh->format&VERTEX_FORMAT_RBG)*3 + (mesh->format&VERTEX_FORMAT_ALPHA);
-	int index = 0;	// Make this not just 0 in future?
+	unsigned int stride, index, uv, rgb, a;
+	uv = !!(mesh->format & VERTEX_FORMAT_UV);
+	rgb = !!(mesh->format & VERTEX_FORMAT_RGB);
+	a = !!(mesh->format & VERTEX_FORMAT_ALPHA);
+	stride = 3 + uv*2 + rgb*3 + a;
+	index = 0;
+
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(index);
-	if (mesh->format&VERTEX_FORMAT_UV)
-		glVertexAttribPointer(index++, 2, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)(3*sizeof(float)));
+	index++;
+	if (uv) {
+		glVertexAttribPointer(index, 2, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)(3*sizeof(float)));
 		glEnableVertexAttribArray(index);
-	if (mesh->format&VERTEX_FORMAT_RBG)
-		glVertexAttribPointer(index++, 3+(mesh->format&VERTEX_FORMAT_ALPHA), GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)((3+(mesh->format&VERTEX_FORMAT_UV)*2)*sizeof(float)));
+		index++;
+	}
+	if (rgb) {
+		glVertexAttribPointer(index, 3+a, GL_FLOAT, GL_FALSE, stride*sizeof(float), (void*)((3+uv*2)*sizeof(float)));
 		glEnableVertexAttribArray(index);
+		index++;
+	}
 }
 
 GFXmesh gfxGenerateTri(float b, float h) {
 	GFXmesh mesh = gfxMeshStart(VERTEX_FORMAT_UV);
 	float vert[3*5] = {
-		-b/2,  -h/2, 0.0f,  0.0, 0.0,
-    	 b/2,  -h/2, 0.0f,  1.0, 0.0,
-    	 0.0f,  h/2, 0.0f, 	0.5, 1.0};
+		-b/2,  -h/2, 0.0f,  0.0f, 1.0f,
+    	 b/2,  -h/2, 0.0f,  1.0f, 0.0f,
+    	 0.0f,  h/2, 0.0f, 	0.5f, 1.0f};
    	unsigned int indcs[3] = {0,1,2};
-	gfxMeshAddVertices(&mesh, GL_STATIC_DRAW, vert, 3*5, indcs, 3);
+	gfxMeshAddVertices(&mesh, GL_STATIC_DRAW, vert, 3, indcs, 3);
 	gfxMeshFinish(&mesh);
 	return mesh;
 }
@@ -83,14 +97,36 @@ GFXmesh gfxGenerateTri(float b, float h) {
 GFXmesh gfxGenerateRect(float w, float h) {
 	GFXmesh mesh = gfxMeshStart(VERTEX_FORMAT_UV);
 	float vert[4*5] = {
-		-w/2,	 h/2, 0.0f, 0.0f, 1.0f,
-		 w/2,	 h/2, 0.0f, 1.0f, 1.0f,
-		 w/2,	-h/2, 0.0f, 1.0f, 0.0f,
-		-w/2,	-h/2, 0.0f, 0.0f, 0.0f};
+		-w/2,	 h/2, 0.0f, 0.0f, 0.0f,
+		 w/2,	 h/2, 0.0f, 1.0f, 0.0f,
+		 w/2,	-h/2, 0.0f, 1.0f, 1.0f,
+		-w/2,	-h/2, 0.0f, 0.0f, 1.0f};
 	unsigned int indcs[6] = {3,0,1,1,2,3};
-	gfxMeshAddVertices(&mesh, GL_STATIC_DRAW, vert, 4*5, indcs, 6);
+	gfxMeshAddVertices(&mesh, GL_STATIC_DRAW, vert, 4, indcs, 6);
 	gfxMeshFinish(&mesh);
 	return mesh;
+}
+
+GFXtexture gfxLoadTexture(char* filepath, GLint format) {
+	GFXtexture tex;
+	glGenTextures(1, &tex.texture);
+	glBindTexture(GL_TEXTURE_2D, tex.texture);
+
+	unsigned char* img_data = stbi_load(filepath, &tex.width, &tex.height, &tex.n_channels, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, img_data);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// MAKE THIS DEFAULT MORE CUSTOMIZABLE IN FUTURE!!!!
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // for scaling down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // for scaling up
+
+	stbi_image_free(img_data);
+	return tex;
+}
+
+void gfxUnloadTexture(GFXtexture* texture) {
+	glDeleteTextures(1, &texture->texture);
 }
 
 void gfxSetShader(GFXshader* shader) {
