@@ -40,7 +40,7 @@ int ringCleanup();
 int ringAppendSins(Sin** sins, int num);
 int ringReplaceSin();
 int ringDuplicateSins();
-int ringPurgeSin();
+int ringPurgeSin(int id);
 Sin* ringGetSinByID(int id);
 
 /* event execution */
