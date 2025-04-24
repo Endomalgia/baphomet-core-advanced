@@ -7,6 +7,7 @@
 /* variables */
 GLFWwindow* ACTIVE_WINDOW = 	NULL;
 GFXshader* 	ACTIVE_SHADER = 	NULL;
+GFXcamera*	ACTIVE_CAMERA = 	NULL;
 
 GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -39,6 +40,36 @@ void gfxDrawMesh(GFXmesh* mesh) {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->elements, GL_UNSIGNED_INT, 0);
 }
+
+void gfxCameraSetViewLookat(GFXcamera* camera, vec3 from, vec3 to) { // redo with vectors
+	vec3 up = {0.0f, 1.0f, 0.0f};
+	glm_lookat(from, to, up, camera->view_mat);
+}
+
+//void gfxCameraSetViewAero(GFXcamera* camera, float x, float y, float z, float yaw, float pitch, float roll);
+//void gfxCameraSetViewGimb(GFXcamera* camera, float x, float y, float z, float s, float p, float d, float f);
+
+void gfxCameraSetProjectionOrtho(GFXcamera* camera, float left, float right, float bottom, float top, float near, float far) {
+	glm_ortho(left, right, bottom, top, near, far, camera->proj_mat);
+}
+
+void gfxCameraSetProjectionPersp(GFXcamera* camera, float fov, float aspect, float near, float far) {
+	glm_perspective(fov, aspect, near, far, camera->proj_mat);
+}
+
+GFXcamera gfxCreateCamera() {
+	GFXcamera cam;
+	return cam;
+}
+
+GFXcamera* gfxGetCamera() {
+	return ACTIVE_CAMERA;
+}
+
+void gfxSetCamera(GFXcamera* camera) {
+	ACTIVE_CAMERA = camera;
+}
+
 
 GFXmesh gfxMeshStart(int format) {
 	GFXmesh mesh = {0, 0, format};
@@ -194,6 +225,11 @@ GFXsfrag gfxBuildShaderFragment(char* filepath, GLenum shader_type) {
 void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y) {
 	int unloc = glGetUniformLocation(shader->program, name);
 	glUniform2f(unloc, x, y);
+}
+
+void gfxShaderSetUniformMat4(GFXshader* shader, char* name, mat4 matrix) {
+	int unloc = glGetUniformLocation(shader->program, name);
+	glUniformMatrix4fv(unloc, 1, GL_FALSE, (const float*)matrix); // Does this need to be const?
 }
 
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window) {

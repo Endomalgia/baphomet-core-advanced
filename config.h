@@ -48,6 +48,8 @@ static const char default_window_name[]       = "Test!";
 
 /* /////////////////////////////// BAPHOMET //////////////////////////////// */
 
+// vec3 UP_VECTOR = {0.0f, 1.0f, 0.0f}; // Implementing this into camera functions would be nice
+
 static char* error_log_format = "\n[E] ERROR DETECTED \n \
   \t Identifier: %s \n \
   \t glGetError: %x \n \

@@ -83,13 +83,25 @@ int main(int argc, char* argv[]) {
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
-	GFXtexture tex = gfxLoadTexture("assets/sprites/baphomet.png", GL_RGBA);
-	gfxSetTexture(&tex);
+	GFXcamera cam = gfxCreateCamera();
+	gfxSetCamera(&cam);
+
+	vec3 from = {0.05, 0.0, -0.8};
+	vec3 to = {0.1, 0.0, 0.1};
+	gfxCameraSetViewLookat(&cam, from, to);
+	gfxCameraSetProjectionPersp(&cam, 210.0 * 3.14 / 360.0, 1.0, 0.0001, 10000.0);
+
+	GFXtexture tex_moon = gfxLoadTexture("assets/sprites/moon.png", GL_RGBA);
+
+	GFXtexture tex_sun = gfxLoadTexture("assets/sprites/sun.png", GL_RGBA);
+	gfxSetTexture(&tex_sun);
 
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
 
   GFXmesh mesh = gfxGenerateRect(1.0f, 1.0f);
+
+  GFXmesh mesh_moon = gfxGenerateRect(0.5f, 0.5f);
 
   glUseProgram(gfxGetShader()->program);
 
@@ -97,12 +109,28 @@ int main(int argc, char* argv[]) {
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
 		double DELTA_TIME = PROGRAM_TIME - glfwGetTime();
 
-		glClearColor(0.7176f, 0.1098f, 0.1098f, 1.0f);
+		//glClearColor(0.7176f, 0.1098f, 0.1098f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())*1.0f, cos(glfwGetTime())*1.0f);
+
+		gfxSetTexture(&tex_moon);
+		gfxDrawMesh(&mesh_moon);
+
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", 0.0f, 0.0f);
+
+		gfxSetTexture(&tex_sun);
 		gfxDrawMesh(&mesh);
 
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())/2.0f, cos(glfwGetTime())/2.0f);
+		//gfxCameraSetProjectionPersp(&cam, 3.14/2.0 + (cos(glfwGetTime()) * 3.14/2), 1.0, 0.0001, 10000.0);
+
+		vec3 from = {sin(glfwGetTime()) * 1.5, 0.0, cos(glfwGetTime()) * 1.5};
+		gfxCameraSetViewLookat(&cam, from, to);
+
+		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
+		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
 
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
