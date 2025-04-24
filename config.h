@@ -42,8 +42,8 @@ static struct argp_option argp_program_options[] = {
 #define DEFAULT_TEXTURE_FILTER  GL_LINEAR
 
 /* Window */
-static const uint default_window_width        = 640;
-static const uint default_window_height       = 480;
+static const unsigned int default_window_width        = 640;
+static const unsigned int default_window_height       = 480;
 static const char default_window_name[]       = "Test!";
 
 /* /////////////////////////////// BAPHOMET //////////////////////////////// */
