@@ -65,11 +65,13 @@ Sin* ringGetSinByID(int id) {
 }
 
 int ringExecuteEvent(uint8_t event) {
-	for (int j=0;j<=RING_LENGTH;j++) {
+	for (int j=0;j<RING_LENGTH;j++) {
 		sinExecuteEvent(RING[j],event); // Very suprising I know
 	}
+	return 0;
 }
 
 int sinExecuteEvent(Sin* sin, uint8_t event) {
 	sin->event_script(sin, event);
+	return 0;
 }

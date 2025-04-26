@@ -26,6 +26,9 @@
 #include "gfx.h"
 #include "ring.h"
 
+#include "assets/sinners/default.h"
+#include "assets/sinners/kitty.h"
+
 /* variables */
 //static SDL_Window* window = NULL;
 //static SDL_Renderer* renderer = NULL;
@@ -80,6 +83,17 @@ int main(int argc, char* argv[]) {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	#endif
 
+	ringInit();
+
+	ringAppendSins(&(sin_default.oid), 1);
+	ringAppendSins(&(sin_kitty.oid), 1);
+
+	ringExecuteEvent(EVENT_CREATE);
+
+	ringExecuteEvent(EVENT_STEP);
+
+	ringCleanup();
+
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
@@ -87,7 +101,7 @@ int main(int argc, char* argv[]) {
 	gfxSetCamera(&cam);
 
 	vec3 from = {0.05, 0.0, -0.8};
-	vec3 to = {0.1, 0.0, 0.1};
+	vec3 to = {0.0, 0.0, 0.0};
 	gfxCameraSetViewLookat(&cam, from, to);
 	gfxCameraSetProjectionPersp(&cam, 210.0 * 3.14 / 360.0, 1.0, 0.0001, 10000.0);
 
@@ -114,7 +128,11 @@ int main(int argc, char* argv[]) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime())*1.0f, cos(glfwGetTime())*1.0f);
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*1.2312f)*1.0f, cos(glfwGetTime()*1.2312f)*1.0f);
+
+		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*15.0f)*1.0f, cos(glfwGetTime()*15.0f)*1.0f);
+		}
 
 		gfxSetTexture(&tex_moon);
 		gfxDrawMesh(&mesh_moon);
@@ -135,7 +153,7 @@ int main(int argc, char* argv[]) {
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
 
-		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(gfxGetActiveWindow(), GL_TRUE);
     }
 	}
