@@ -26,8 +26,8 @@
 #include "gfx.h"
 #include "ring.h"
 
-#include "assets/sinners/default.h"
-#include "assets/sinners/kitty.h"
+/* sinner index */
+#include "assets/sinners/sinner-index.h"
 
 /* variables */
 //static SDL_Window* window = NULL;
@@ -85,37 +85,16 @@ int main(int argc, char* argv[]) {
 
 	ringInit();
 
-	ringAppendSins(&(sin_default.oid), 1);
-	ringAppendSins(&(sin_kitty.oid), 1);
-
-	ringExecuteEvent(EVENT_CREATE);
-
-	ringExecuteEvent(EVENT_STEP);
-
-	ringCleanup();
+	ringAppendSins((Sin**)&(sin_solar.oid), 1);
+	ringAppendSins((Sin**)&(sin_camera.oid), 1);
 
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
-	GFXcamera cam = gfxCreateCamera();
-	gfxSetCamera(&cam);
-
-	vec3 from = {0.05, 0.0, -0.8};
-	vec3 to = {0.0, 0.0, 0.0};
-	gfxCameraSetViewLookat(&cam, from, to);
-	gfxCameraSetProjectionPersp(&cam, 210.0 * 3.14 / 360.0, 1.0, 0.0001, 10000.0);
-
-	GFXtexture tex_moon = gfxLoadTexture("assets/sprites/moon.png", GL_RGBA);
-
-	GFXtexture tex_sun = gfxLoadTexture("assets/sprites/sun.png", GL_RGBA);
-	gfxSetTexture(&tex_sun);
+	ringExecuteEvent(EVENT_CREATE);
 
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
-
-  GFXmesh mesh = gfxGenerateRect(1.0f, 1.0f);
-
-  GFXmesh mesh_moon = gfxGenerateRect(0.5f, 0.5f);
 
   glUseProgram(gfxGetShader()->program);
 
@@ -127,25 +106,7 @@ int main(int argc, char* argv[]) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*1.2312f)*1.0f, cos(glfwGetTime()*1.2312f)*1.0f);
-
-		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*15.0f)*1.0f, cos(glfwGetTime()*15.0f)*1.0f);
-		}
-
-		gfxSetTexture(&tex_moon);
-		gfxDrawMesh(&mesh_moon);
-
-		gfxShaderSetUniformVec2(gfxGetShader(), "position", 0.0f, 0.0f);
-
-		gfxSetTexture(&tex_sun);
-		gfxDrawMesh(&mesh);
-
-		//gfxCameraSetProjectionPersp(&cam, 3.14/2.0 + (cos(glfwGetTime()) * 3.14/2), 1.0, 0.0001, 10000.0);
-
-		vec3 from = {sin(glfwGetTime()) * 1.5, 0.0, cos(glfwGetTime()) * 1.5};
-		gfxCameraSetViewLookat(&cam, from, to);
+		ringExecuteEvent(EVENT_STEP);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
@@ -158,13 +119,15 @@ int main(int argc, char* argv[]) {
     }
 	}
 	
+	ringExecuteEvent(EVENT_DESTROY);
+	ringCleanup();
 	glfwTerminate();
 	return 0;
 }
 
 static void err(char* error_text, int n, ...) {
 	char output_log[512];
-	sprintf(output_log, error_log_format, error_text, glGetError());
+	sprintf(output_log, error_log_format, error_text, glGetError()); // use sprintf_s here
 	fprintf(stderr, "%s", output_log);
 }
 

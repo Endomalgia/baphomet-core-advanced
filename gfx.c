@@ -139,6 +139,7 @@ GFXmesh gfxGenerateRect(float w, float h) {
 }
 
 GFXtexture gfxLoadTexture(char* filepath, GLint format) {
+
 	GFXtexture tex;
 	glGenTextures(1, &tex.texture);
 	glBindTexture(GL_TEXTURE_2D, tex.texture);
