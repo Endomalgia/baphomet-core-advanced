@@ -7,14 +7,11 @@ struct data_camera {
 };
 
 int script_camera(void* oid, uint8_t event_flag) {
-	static const void* table[] = {&&CREATE, &&STEP, NULL, &&DESTROY};
+	static const void* table[] = {&&CREATE, &&STEP, NULL, NULL, &&DESTROY};
 	goto *table[event_flag];
 
 	static struct data_camera* dat = NULL;
-
 	static vec3 to = {0.0, 0.0, 0.0};		// Memory leak here with lazier code, all vec/mats need to be preallocated (augh....)
-	//static vec3 from = {0.05, 0.0, -0.8};
-
 
 	CREATE:
 		dat = ((Sin*)oid)->data = malloc(sizeof(struct data_camera));

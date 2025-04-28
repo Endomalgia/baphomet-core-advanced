@@ -9,7 +9,7 @@ struct data_solar {
 };
 
 int script_solar(void* oid, uint8_t event_flag) {
-	static const void* table[] = {&&CREATE, &&STEP, NULL, &&DESTROY};
+	static const void* table[] = {&&CREATE, &&STEP, NULL, NULL, &&DESTROY};
 	goto *table[event_flag];
 
 	static struct data_solar* dat = NULL;

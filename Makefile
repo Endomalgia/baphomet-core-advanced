@@ -11,7 +11,7 @@ INCS = -Iinclude -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/free
 LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -ldl -logg -lvorbis -lportaudio -lpthread -lSDL3
 
 # Flags
-CFLAGS = ${INCS}
+CFLAGS = ${INCS} -std=gnu17
 LDFLAGS = ${LIBS} -Wall # LD_CONFIG Manually for SDL3
 
 # Compiler & Platform/Architecture

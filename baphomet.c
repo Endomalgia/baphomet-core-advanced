@@ -85,8 +85,8 @@ int main(int argc, char* argv[]) {
 
 	ringInit();
 
-	ringAppendSins((Sin**)&(sin_solar.oid), 1);
-	ringAppendSins((Sin**)&(sin_camera.oid), 1);
+	static Sin* room_solar[] = {&sin_solar, &sin_camera};
+	ringAppendSins(room_solar, 2);
 
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
@@ -106,10 +106,12 @@ int main(int argc, char* argv[]) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		
 		ringExecuteEvent(EVENT_STEP);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
+		
 
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
@@ -118,9 +120,11 @@ int main(int argc, char* argv[]) {
       glfwSetWindowShouldClose(gfxGetActiveWindow(), GL_TRUE);
     }
 	}
-	
+
 	ringExecuteEvent(EVENT_DESTROY);
+
 	ringCleanup();
+
 	glfwTerminate();
 	return 0;
 }

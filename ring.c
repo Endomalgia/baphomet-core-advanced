@@ -9,7 +9,7 @@ Sin** ringGetDebug() {
 }
 
 void ringInit() {
-	RING = (Sin**)malloc(sizeof(void*));
+	RING = calloc(0, sizeof(Sin*));
 }
 
 void ringBufferElement(int id, int ptr_widths) {
@@ -23,18 +23,14 @@ void ringBufferElement(int id, int ptr_widths) {
 }
 
 void ringCleanup() {
-	free(RING);
+	free((void*)RING);
 }
 
 void ringAppendSins(Sin** sins, int num) {
-	RING = (Sin**)realloc(RING, sizeof(void*) * (RING_LENGTH + num + 1));
-	//memcpy(&RING[RING_LENGTH], &sins, sizeof(void*) * num); // Consider using memcpy :3
-	for (int z=0;z<num;z++) {
-		RING[RING_LENGTH+z] = sins[z];
-		sins[z]->id = RING_LENGTH+z;
-	}
+	RING = realloc(RING, sizeof(Sin*) * (RING_LENGTH + num + 1));
+	memcpy(&RING[RING_LENGTH], sins, sizeof(void*) * num); // Consider using memcpy :3
 	RING_LENGTH+=num;
-	RING[RING_LENGTH+1] = NULL;	// Always null terminate the ring to please our lord and savior Satan H. Christ
+	RING[RING_LENGTH] = NULL;	// Always null terminate the ring to please our lord and savior Satan H. Christ
 }
 
 void ringReplaceSin() {
