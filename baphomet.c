@@ -20,11 +20,13 @@
 #include <math.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <portaudio.h>
 
 /* core includes */
 #include "util.h"
 #include "gfx.h"
 #include "ring.h"
+#include "aud.h"
 
 /* sinner index */
 #include "assets/sinners/sinner-index.h"
@@ -74,7 +76,7 @@ int main(int argc, char* argv[]) {
 	(cmd_args.debug) ? fprintf(stderr,"\tDEBUG ENABLED:\n"):0;
 
 	if (!glfwInit())
-		printf("[E]\t In main(): Failed to initialize glfw :("); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
+		fprintf(stderr, "[E]\t In main(): Failed to initialize glfw :("); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MINOR);
@@ -82,6 +84,26 @@ int main(int argc, char* argv[]) {
 	#ifdef __APPLE__
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	#endif
+
+	PaError err = Pa_Initialize();
+	if (err != paNoError)
+		fprintf(stderr, "[E]\t In main(): Failed to initialize portaudio :( : %s\n", Pa_GetErrorText(err));
+
+	PaStreamParameters in = {0, 0, DEFAULT_SAMPLE_FORMAT, 0, NULL};
+	PaStreamParameters out = {0, 0, DEFAULT_SAMPLE_FORMAT, 0, NULL};
+	audSetInputParams(&in);
+	audSetOutputParams(&out);
+
+	// Print all audio devices
+	char** log = audGetDeviceList();
+	fprintf(stderr, "Devices : \n");
+	for(int i=0;log[i]!=NULL;i++) {
+		fprintf(stderr, "\t (%u) %s\n", (unsigned int)i, log[i]);
+	}
+	free(log);
+
+	audSetInputDevice(Pa_GetDefaultInputDevice());
+	audSetOutputDevice(Pa_GetDefaultOutputDevice());
 
 	ringInit();
 
@@ -97,6 +119,14 @@ int main(int argc, char* argv[]) {
 	gfxSetShader(&default_shader);
 
   glUseProgram(gfxGetShader()->program);
+  
+  
+  audSpecialLoadSfx("assets/sfx/wavwav.wav");
+
+  printf("LOAD OVER\n");
+
+  //AUDsfx* wave = audLoadSfx("assets/sfx/antonymph.wav");
+  //audSoundPlay(wave, false);
 
 	double PROGRAM_TIME = glfwGetTime();
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
@@ -113,6 +143,7 @@ int main(int argc, char* argv[]) {
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
 		
 
+
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
 
@@ -124,6 +155,8 @@ int main(int argc, char* argv[]) {
 	ringExecuteEvent(EVENT_DESTROY);
 
 	ringCleanup();
+
+	Pa_Terminate();
 
 	glfwTerminate();
 	return 0;

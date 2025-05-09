@@ -32,13 +32,13 @@ GLFWwindow* gfxGetActiveWindow() {
 	return ACTIVE_WINDOW;
 }
 
-void gfxSetTexture(GFXtexture* tex) {
-	glBindTexture(GL_TEXTURE_2D, tex->texture);
-}
-
 void gfxDrawMesh(GFXmesh* mesh) {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->elements, GL_UNSIGNED_INT, 0);
+}
+
+void gfxSetTexture(GFXtexture* tex) {
+	glBindTexture(GL_TEXTURE_2D, tex->texture);
 }
 
 void gfxCameraSetViewLookat(GFXcamera* camera, vec3 from, vec3 to) { // redo with vectors
@@ -60,6 +60,13 @@ void gfxCameraSetProjectionPersp(GFXcamera* camera, float fov, float aspect, flo
 GFXcamera gfxCreateCamera() {
 	GFXcamera cam;
 	return cam;
+}
+
+void gfxApplyCamera(GFXcamera* camera) {
+	GFXshader* shd = gfxGetShader();
+	GFXcamera* cam = gfxGetCamera();
+	gfxShaderSetUniformMat4(shd, "view", cam->view_mat);
+	gfxShaderSetUniformMat4(shd, "projec", cam->proj_mat);
 }
 
 GFXcamera* gfxGetCamera() {
@@ -143,7 +150,8 @@ GFXtexture gfxLoadTexture(char* filepath, GLint format) {
 	GFXtexture tex;
 	glGenTextures(1, &tex.texture);
 	glBindTexture(GL_TEXTURE_2D, tex.texture);
-
+ 
+ 	// CONSIDER stbi_load_from_callbacks(); !!!!!!!!!!!!!!!!
 	unsigned char* img_data = stbi_load(filepath, &tex.width, &tex.height, &tex.n_channels, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, img_data);
 

@@ -23,7 +23,7 @@ ARCHITECTURE = $(shell uname -m)
 BUILD_DIR := ./build
 
 # Files to manipulate
-SRC := baphomet.c ring.c gfx.c glad.c util.c
+SRC := baphomet.c ring.c gfx.c glad.c util.c aud.c
 OBJ := $(SRC:%=$(BUILD_DIR)/%.o)
 
 all: options ${SO} build

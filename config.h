@@ -32,6 +32,7 @@ static struct argp_option argp_program_options[] = {
   { 0 }};
 
 /* //////////////////////////// GLFW and OPENGL //////////////////////////// */
+
 /* General */
 #define GLFW_VERSION_MAJOR 3
 #define GLFW_VERSION_MINOR 3
@@ -44,7 +45,11 @@ static struct argp_option argp_program_options[] = {
 /* Window */
 static const unsigned int default_window_width        = 640;
 static const unsigned int default_window_height       = 480;
-static const char default_window_name[]       = "Test!";
+static const char default_window_name[]               = "Test!";
+
+/* /////////////////////////////// PORTAUDIO /////////////////////////////// */
+
+#define DEFAULT_SAMPLE_FORMAT   paFloat32
 
 /* /////////////////////////////// BAPHOMET //////////////////////////////// */
 

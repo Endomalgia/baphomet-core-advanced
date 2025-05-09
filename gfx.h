@@ -79,11 +79,11 @@ GLFWwindow* gfxGetActiveWindow();
 
 /* draw commands */
 void gfxDrawClear(float r, float g, float b, float a);
-void gfxDrawMode(GLenum mode);
-void gfxQuickDrawSprite();
+void gfxDrawSprite2D(GFXsprite* sprite, float x, float y, float depth, float rot, float sx, float sy);
+void gfxDrawSprite(GFXsprite* sprite, float x, float y, float z, float rot);
+void gfxDrawSpriteExt(GFXsprite* sprite, float x, float y, float z, float sx, float sy, float sz);
 void gfxDrawMesh(GFXmesh* mesh);
 void gfxSetTexture(GFXtexture* texture);
-void gfxSetBlendmode();
 
 /* camera commands */
 void gfxCameraSetViewLookat(GFXcamera* camera, vec3 from, vec3 to);
@@ -92,6 +92,7 @@ void gfxCameraSetViewGimb(GFXcamera* camera, float x, float y, float z, float s,
 void gfxCameraSetProjectionOrtho(GFXcamera* camera, float left, float right, float bottom, float top, float near, float far);
 void gfxCameraSetProjectionPersp(GFXcamera* camera, float fov, float aspect, float near, float far); // fov expressed in rad between 0 and pi (for some reason??)
 GFXcamera gfxCreateCamera();
+void gfxApplyCamera(GFXcamera* camera);
 GFXcamera* gfxGetCamera();
 void gfxSetCamera(GFXcamera* camera);
 

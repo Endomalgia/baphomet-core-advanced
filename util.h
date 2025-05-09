@@ -18,6 +18,13 @@
 /* macros */
 
 /* types */
+typedef struct {
+	char* name;
+	long length;
+	long offset;
+	int type;
+	int rp_index; // Index of the ring file the asset is contained within
+} RIasset;
 
 /* file and text management */
 char* fileGetString(char* filepath);

@@ -25,7 +25,6 @@ int script_solar(void* oid, uint8_t event_flag) {
 		
 		return 0;
 	STEP:
-	
 		gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*1.2312f)*1.0f, cos(glfwGetTime()*1.2312f)*1.0f);
 		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) {
 			gfxShaderSetUniformVec2(gfxGetShader(), "position", sin(glfwGetTime()*15.0f)*1.0f, cos(glfwGetTime()*15.0f)*1.0f);
@@ -41,6 +40,9 @@ int script_solar(void* oid, uint8_t event_flag) {
 
 		return 0;
 	DESTROY:
+		gfxUnloadTexture(&(dat->t_sun));
+		gfxUnloadTexture(&(dat->t_moon));
+
 		free(dat);
 		return 0;
 }
