@@ -1,8 +1,6 @@
 #include "gfx.h"
 
-/* stb image funcions */
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+
 
 /* variables */
 GLFWwindow* ACTIVE_WINDOW = 	NULL;
