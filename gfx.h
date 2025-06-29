@@ -24,6 +24,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <stb/stb_image.h>
 
 #include <cglm/cglm.h>
@@ -117,6 +120,21 @@ GFXsfrag gfxBuildShaderFragment(char* filepath, GLenum shader_type);
 void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y);
 void gfxShaderSetUniformMat4(GFXshader* shader, char* name, mat4 matrix);
 
+/* fonts 
+void gfxSetActiveFTLibrary(FT_Library* ft_l);
+FT_Library* gfxGetActiveFTLibrary();
+void gfxLoadFont(char* filepath);
+void gfxSetFont(FT_Face* font);
+void gfxSetFontSize(FT_Face* font);
+void gfxDrawText(float x, float y, char* text);
+void gfxDrawTextExt(float x, float y, char* text, ...);
+*/
+
+// Have these input into draw functions instead of having variations for each one
+//mat4 xydmat(float x, float y, float depth);
+//mat4 xysrdmat(float x, float y, float sx, float sy, float rot, float depth);
+//mat4 3dyprmat(float x, float y, float z, float sx, float sy, float sz, float yaw, float pitch, float roll);
+//mat4 3deulmat(float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz, float rw);
 
 /* default callbacks */
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window);

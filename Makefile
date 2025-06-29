@@ -8,7 +8,7 @@ NAME = baphomet
 
 # Includes and Libs
 INCS = -Iinclude -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/freetype2 -I./
-LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -ldl -logg -lvorbis -lportaudio -lpthread -lSDL3
+LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -ldl -logg -lvorbis -lportaudio -lpthread -lSDL3 -lfreetype
 
 # Flags
 CFLAGS = ${INCS} -std=gnu17

@@ -39,8 +39,6 @@ void audSetInputDevice(int dev_index);
 void audSetOutputDevice(int dev_index);
 char** audGetDeviceList();	// Free this after using, theres a malloc here
 
-AUDsfx* audSpecialLoadSfx(char* filepath);
-
 /* audio loading */
 AUDsfx* audLoadSfx(char* filepath);
 void audUnloadSfx(AUDsfx* sfx);

@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 	(cmd_args.debug) ? fprintf(stderr,"\tDEBUG ENABLED:\n"):0;
 
 	if (!glfwInit())
-		fprintf(stderr, "[E]\t In main(): Failed to initialize glfw :("); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
+		fprintf(stderr, "[E]\t In main(): Failed to initialize glfw :(\n"); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MINOR);
@@ -84,6 +84,15 @@ int main(int argc, char* argv[]) {
 	#ifdef __APPLE__
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	#endif
+
+	/*
+	FT_Library* ft_l;
+	if (FT_Init_FreeType(ft_l)) {
+		printf("[E]\t In main(): Failed to initialize FreeType :(\n");
+		exit(0);
+	}
+	gfxSetActiveFTLibrary(ft_l);
+	*/
 
 	PaError err = Pa_Initialize();
 	if (err != paNoError)
@@ -115,15 +124,16 @@ int main(int argc, char* argv[]) {
 
 	ringExecuteEvent(EVENT_CREATE);
 
+
+
+	//gfxLoadFont("assets/fonts/appsilbi.ttf");
+
+
+
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
 
   glUseProgram(gfxGetShader()->program);
-  
-  
-  audSpecialLoadSfx("assets/sfx/wavwav.wav");
-
-  printf("LOAD OVER\n");
 
   //AUDsfx* wave = audLoadSfx("assets/sfx/antonymph.wav");
   //audSoundPlay(wave, false);

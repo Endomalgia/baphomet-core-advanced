@@ -3,9 +3,14 @@
 
 
 /* variables */
-GLFWwindow* ACTIVE_WINDOW = 	NULL;
-GFXshader* 	ACTIVE_SHADER = 	NULL;
-GFXcamera*	ACTIVE_CAMERA = 	NULL;
+GLFWwindow* ACTIVE_WINDOW 		= 	NULL;
+GFXshader* 	ACTIVE_SHADER 		= 	NULL;
+GFXcamera*	ACTIVE_CAMERA 		= 	NULL;
+FT_Library*	ACTIVE_FT_LIBRARY	=	NULL;
+
+/* stbi */
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -237,6 +242,44 @@ void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y) {
 void gfxShaderSetUniformMat4(GFXshader* shader, char* name, mat4 matrix) {
 	int unloc = glGetUniformLocation(shader->program, name);
 	glUniformMatrix4fv(unloc, 1, GL_FALSE, (const float*)matrix); // Does this need to be const?
+}
+
+/*
+void gfxSetActiveFTLibrary(FT_Library* ft_l) {
+	ACTIVE_FT_LIBRARY = ft_l;
+}
+
+FT_Library* gfxGetActiveFTLibrary() {
+	return ACTIVE_FT_LIBRARY;
+}
+
+void gfxLoadFont(char* filepath) {
+	FT_Face* face;
+
+	FT_Face face;
+	if (FT_New_Face(ft, filepath, 0, &face)) {
+		printf("Failed to load font\n");
+		exit(0);
+	}
+
+
+	// Size of font in pixels!
+	FT_Set_Pixel_Sizes(face, 0, 48);
+	
+	
+}
+
+void gfxSetFont(FT_Face* font) {
+
+}
+
+void gfxSetFontSize(FT_Face* font, float height) {
+	FT_Set_Pixel_Sizes()
+}
+*/
+
+void gfxDrawText(char* filepath, float x, float y, char* text) {
+
 }
 
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window) {
