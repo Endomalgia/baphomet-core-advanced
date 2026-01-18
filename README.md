@@ -14,7 +14,7 @@
 	<body>
 		<h2>Objectives:</h2>
 		<ul>
-            <li>Implement freetype font rendering</li>
+            <li>Add alpha channel to rendered text</li>
 		</ul>
 	</body>
 </html>
