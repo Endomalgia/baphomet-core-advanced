@@ -92,7 +92,6 @@ int main(int argc, char* argv[]) {
 	}
 	gfxSetActiveFTLibrary(&ft_l);
 
-	/*
 	PaError err = Pa_Initialize();
 	if (err != paNoError)
 		fprintf(stderr, "[E]\t In main(): Failed to initialize portaudio :( : %s\n", Pa_GetErrorText(err));
@@ -112,7 +111,6 @@ int main(int argc, char* argv[]) {
 
 	audSetInputDevice(Pa_GetDefaultInputDevice());
 	audSetOutputDevice(Pa_GetDefaultOutputDevice());
-	*/
 
 	ringInit();
 
@@ -129,23 +127,13 @@ int main(int argc, char* argv[]) {
 
 	GFXfont f_silbi = gfxLoadFont("assets/fonts/appsilbi.ttf");
 
-	GFXtexture* character = &(f_silbi.index[107].texture);
-	/*
-	for (int i=0; i<128; i++) {
-		character = &(f_silbi.index[i].texture);
-		printf("FONT SILBI CHARACTER %u '%c' INFO : \n", i, i);
-		printf("\t width : %u\n", character->width);
-		printf("\t height : %u\n", character->height);
-	}
-	*/
-
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
 
   glUseProgram(gfxGetShader()->program);
 
-  //AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
-  //audSoundPlay(wave, false);
+  AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
+  audSoundPlay(wave, false);
 
 	double PROGRAM_TIME = glfwGetTime();
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
@@ -161,8 +149,6 @@ int main(int argc, char* argv[]) {
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", GLM_MAT4_IDENTITY);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", GLM_MAT4_IDENTITY);
-
-		//gfxDrawTexture2DExt(character, -0.5f, 0.5f, 0.0f, 0.0f, 0.005 * character->width, 0.005 * character->height);
 
 		gfxDrawText(&f_silbi, "hello!\0", -1.0f, -1.0f);
 

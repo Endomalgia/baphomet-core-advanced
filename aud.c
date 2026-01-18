@@ -26,6 +26,7 @@ void audSetInputDevice(int dev_index) {
 	Param_IN->device = dev_index;
 }
 
+/* Should error if no devices exist lmao */
 void audSetOutputDevice(int dev_index) {
 	const PaDeviceInfo* dev_info = Pa_GetDeviceInfo(dev_index);
 	Param_OUT->suggestedLatency = dev_info->defaultHighOutputLatency;
@@ -56,16 +57,20 @@ AUDsfx* audLoadSfx(char* filepath) {
 	soundfile = sf_open_fd(fd, SFM_READ, &(sfx->soundfile_info), SF_TRUE);
 	//soundfile = sf_open(filepath, SFM_READ, &(sfx->soundfile_info));
 	if (soundfile == NULL)
-		fprintf(stderr, "An error occured when opening: %s\n", filepath);
+		THROW("An error occured when opening file %s", filepath);
 
 	sfx->user_data = (void*)soundfile;
 	sfx->rate = sfx->soundfile_info.samplerate;
+	if (Param_OUT == NULL) {
+		WARN("Opening audiostream without setting output parameters. Setting to device index 0");
+		audSetOutputDevice(0);
+	}
 	Param_OUT->channelCount = sfx->soundfile_info.channels;
 
 	// Default frame length (4096) is here
 	PaError err = Pa_OpenStream(&(sfx->stream), NULL, Param_OUT, sfx->rate, 4096, paClipOff, _DEFAULT_CALLBACK_LIBSNDFILE, sfx->user_data);
 	if (err != paNoError)
-		fprintf(stderr, "audio_create_callback(): Unable to open stream -> %s\n", Pa_GetErrorText(err));
+		THROW("Unable to open audio stream from file %s\n\t%s",filepath,Pa_GetErrorText(err))
 	return sfx;
 }
 
@@ -76,13 +81,14 @@ void audUnloadSfx(AUDsfx* sfx) {
 void audSoundPlay(AUDsfx* sfx, int loop) {
 	PaError err;
 	err = Pa_StartStream(sfx->stream);
-	(err != paNoError) ? fprintf(stderr, "audio_sound_play(): %s\n", Pa_GetErrorText(err)) : 1;
+	if (err != paNoError) 
+		THROW("Unable to play audio\n\t%s", Pa_GetErrorText(err));
 }
 
 void audSoundPause(AUDsfx* sfx) {
 	PaError err;
 	err = Pa_StopStream(sfx->stream);
-	(err != paNoError) ? fprintf(stderr, "audio_sound_pause(): %s\n", Pa_GetErrorText(err)) : 1;
+		THROW("Unable to pause audio\n\t%s", Pa_GetErrorText(err));
 }
 
 static int _DEFAULT_CALLBACK_LIBSNDFILE(const void *inputBuffer, 

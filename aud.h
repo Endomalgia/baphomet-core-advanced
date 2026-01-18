@@ -18,6 +18,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "util.h"
+
 /* macros */
 #define SND_CALLBACK_SNDFILE &_DEFAULT_CALLBACK_LIBSNDFILE
 

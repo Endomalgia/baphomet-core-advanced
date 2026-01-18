@@ -1,7 +1,6 @@
 #include "gfx.h"
 
 
-
 /* variables */
 GLFWwindow* ACTIVE_WINDOW 		= 	NULL;
 GFXshader* 	ACTIVE_SHADER 		= 	NULL;
@@ -19,7 +18,7 @@ GFXmesh MESH_PRIMITIVE_TRIANGLE =	{-1,-1,-1};
 GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (!window)
-		printf("[E]\t In window_create(): Failed to open window :("); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
+		THROW("Failed to open window :(");
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, &_DEFAULT_FRAMEBUFFER_CALLBACK);
 	glfwSetWindowCloseCallback(window, &_DEFAULT_WINDOW_CLOSE_CALLBACK);
@@ -28,7 +27,7 @@ GLFWwindow* gfxQuickWindowCreate(int width, int height, const char* title) {
 	// (I made this note ages ago and now its just a beautiful artifact. Its called a typecast hun)
 	// ((I said this before spending the next several real life hours crying over a linking error before realizing that I had forgotten to add glad.c to the project. I will be nicer to my past self from now on I am sorry))
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-		printf("Failed to initialize glad :(");
+		THROW("Failed to initialize glad :(");
 	}
 
 	ACTIVE_WINDOW = window;
@@ -254,7 +253,7 @@ GFXshader gfxCreateShader(GFXsfrag* fragments, int n_frags) {
 	glGetProgramiv(shd.program, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(shd.program, 512, NULL, info_log);
-		printf("FAILED TO LINK SHADER : %s\n", info_log);
+		THROW("Failed to link shader \n\t%s", info_log);
 	}
 
 	for (int o=0;o<n_frags;o++) {
@@ -284,7 +283,7 @@ GFXsfrag gfxBuildShaderFragment(char* filepath, GLenum shader_type) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 512, NULL, info_log);
-		printf("%s : FAILED TO COMPILE : %s\n", filepath, info_log);
+		WARN("Failed to compile shader fragment from file %s\n\t%s",filepath,info_log);
 		return -1;
 	}
 
@@ -319,8 +318,7 @@ GFXfont gfxLoadFont(char* filepath) {
 	GFXfont font; // Should I be malloc-ing these GFXx's?
 	FT_Face face;
 	if (FT_New_Face(*ACTIVE_FT_LIBRARY, filepath, 0, &face)) {
-		printf("[E]\t In gfxLoadFont(): Failed t o load font\n");
-		exit(0);
+		THROW("Failed to load font from file %s", filepath);
 	}
 
 	// Size of font in pixels!
@@ -331,8 +329,7 @@ GFXfont gfxLoadFont(char* filepath) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Prevents alignment issues https://learnopengl.com/In-Practice/Text-Rendering
 	for (unsigned char i=0;i<128;i++) {
 		if (FT_Load_Char(face, i, FT_LOAD_RENDER)) {
-			printf("[E]\t In gfxLoadFont(): Failed to load glyph/GFXcharacter\n");
-			exit(0);
+			THROW("Failed to load glyph from font (%d)", face->face_index);
 		}
 		GFXcharacter c = {
 			gfxLoadTextureCharArray(face->glyph->bitmap.buffer, 

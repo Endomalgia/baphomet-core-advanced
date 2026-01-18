@@ -7,15 +7,13 @@ char* fileGetString(char* filepath) {
 
 	// Open the file
 	if (!(fptr = fopen(filepath, "r"))) {
-		printf("Cannot open %s!\n", filepath);
-		exit(-1);
+		THROW("Failed to open file %s", filepath);
 	}
 	
 	//Seek towards the end
 	if (fseek(fptr,0L,SEEK_END) != 0) {
-		printf("Could not seek %s!\n", filepath);
 		fclose(fptr);
-		exit(-1);
+		THROW("Failed to seek in file %s",filepath);
 	}
 	
 	// Report the length and reset the position of the file pointer
@@ -31,9 +29,8 @@ char* fileGetString(char* filepath) {
 	
 	// Check if the process worked
 	if (ferror(fptr)) {
-		printf("Failed to read %s!\n", filepath);
 		fclose(fptr);
-		exit(-1);
+		THROW("Failed to read file %s",filepath);
 	}
 
 	// Cleanup

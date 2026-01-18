@@ -25,6 +25,14 @@
 } while (0);
 #endif
 
+#ifndef WARN
+#define WARN(...) do { \
+	fprintf(stderr, "[W]\t In %s:%d : ", __FILE__, __LINE__); \
+	fprintf(stderr, __VA_ARGS__); \
+	fprintf(stderr, "\n"); \
+} while (0);
+#endif
+
 /* types */
 typedef struct {
 	char* name;
