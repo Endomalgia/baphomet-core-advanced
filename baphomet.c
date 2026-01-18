@@ -85,15 +85,14 @@ int main(int argc, char* argv[]) {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	#endif
 
-	/*
-	FT_Library* ft_l;
-	if (FT_Init_FreeType(ft_l)) {
+	FT_Library ft_l; // Cant be a ptr so freetype can allocate it lolz
+	if (FT_Init_FreeType(&ft_l)) {
 		printf("[E]\t In main(): Failed to initialize FreeType :(\n");
 		exit(0);
 	}
-	gfxSetActiveFTLibrary(ft_l);
-	*/
+	gfxSetActiveFTLibrary(&ft_l);
 
+	/*
 	PaError err = Pa_Initialize();
 	if (err != paNoError)
 		fprintf(stderr, "[E]\t In main(): Failed to initialize portaudio :( : %s\n", Pa_GetErrorText(err));
@@ -113,6 +112,7 @@ int main(int argc, char* argv[]) {
 
 	audSetInputDevice(Pa_GetDefaultInputDevice());
 	audSetOutputDevice(Pa_GetDefaultOutputDevice());
+	*/
 
 	ringInit();
 
@@ -122,20 +122,29 @@ int main(int argc, char* argv[]) {
 	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
 	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
 
+	/* Generate mesh primitives */
+	gfxGeneratePrimitives();
+
 	ringExecuteEvent(EVENT_CREATE);
 
+	GFXfont f_silbi = gfxLoadFont("assets/fonts/appsilbi.ttf");
 
-
-	//gfxLoadFont("assets/fonts/appsilbi.ttf");
-
-
+	GFXtexture* character = &(f_silbi.index[107].texture);
+	/*
+	for (int i=0; i<128; i++) {
+		character = &(f_silbi.index[i].texture);
+		printf("FONT SILBI CHARACTER %u '%c' INFO : \n", i, i);
+		printf("\t width : %u\n", character->width);
+		printf("\t height : %u\n", character->height);
+	}
+	*/
 
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
 
   glUseProgram(gfxGetShader()->program);
 
-  //AUDsfx* wave = audLoadSfx("assets/sfx/antonymph.wav");
+  //AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
   //audSoundPlay(wave, false);
 
 	double PROGRAM_TIME = glfwGetTime();
@@ -146,13 +155,19 @@ int main(int argc, char* argv[]) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		
+		gfxShaderSetUniformVec3(gfxGetShader(), "scale", 1.0f, 1.0f, 1.0f);
+
 		ringExecuteEvent(EVENT_STEP);
+
+		gfxShaderSetUniformMat4(gfxGetShader(), "view", GLM_MAT4_IDENTITY);
+		gfxShaderSetUniformMat4(gfxGetShader(), "projec", GLM_MAT4_IDENTITY);
+
+		//gfxDrawTexture2DExt(character, -0.5f, 0.5f, 0.0f, 0.0f, 0.005 * character->width, 0.005 * character->height);
+
+		gfxDrawText(&f_silbi, "hello!\0", -1.0f, -1.0f);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
-		
-
 
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
@@ -167,6 +182,8 @@ int main(int argc, char* argv[]) {
 	ringCleanup();
 
 	Pa_Terminate();
+
+	FT_Done_FreeType(ft_l); // Technically FT stops being needed after the fonts are loaded btw
 
 	glfwTerminate();
 	return 0;

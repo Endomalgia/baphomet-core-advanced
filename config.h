@@ -34,9 +34,9 @@ static struct argp_option argp_program_options[] = {
 /* //////////////////////////// GLFW and OPENGL //////////////////////////// */
 
 /* General */
-#define GLFW_VERSION_MAJOR 3
-#define GLFW_VERSION_MINOR 3
-#define GLFW_PROFILE GLFW_OPENGL_CORE_PROFILE
+#define GLFW_VERSION_MAJOR      3
+#define GLFW_VERSION_MINOR      3
+#define GLFW_PROFILE            GLFW_OPENGL_CORE_PROFILE
 
 /* Graphics Defaults */
 #define DEFAULT_TEXTURE_WRAP    GL_REPEAT
@@ -50,6 +50,10 @@ static const char default_window_name[]               = "Test!";
 /* /////////////////////////////// PORTAUDIO /////////////////////////////// */
 
 #define DEFAULT_SAMPLE_FORMAT   paFloat32
+
+/* /////////////////////////////// FREETYPE //////////////////////////////// */
+
+#define DEFAULT_FONT_SIZE       48
 
 /* /////////////////////////////// BAPHOMET //////////////////////////////// */
 

@@ -8,6 +8,10 @@ GFXshader* 	ACTIVE_SHADER 		= 	NULL;
 GFXcamera*	ACTIVE_CAMERA 		= 	NULL;
 FT_Library*	ACTIVE_FT_LIBRARY	=	NULL;
 
+/* primitives */
+GFXmesh MESH_PRIMITIVE_SQUARE	=	{-1,-1,-1};
+GFXmesh MESH_PRIMITIVE_TRIANGLE =	{-1,-1,-1};
+
 /* stbi */
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -41,7 +45,18 @@ void gfxDrawMesh(GFXmesh* mesh) {
 }
 
 void gfxSetTexture(GFXtexture* tex) {
-	glBindTexture(GL_TEXTURE_2D, tex->texture);
+	glBindTexture(GL_TEXTURE_2D, tex->id);
+}
+
+void gfxDrawTexture2D(GFXtexture* texture, float x, float y, float scale) {
+	gfxDrawTexture2DExt(texture, x, y, 0.0f, 0.0f, scale * texture->width, scale * texture->height);
+}
+
+void gfxDrawTexture2DExt(GFXtexture* texture, float x, float y, float depth, float rot, float sx, float sy) {
+	gfxSetTexture(texture);
+	gfxShaderSetUniformVec2(gfxGetShader(), "position", x, y);
+	gfxShaderSetUniformVec3(gfxGetShader(), "scale", sx, sy, 1.0f);
+	gfxDrawMesh(&MESH_PRIMITIVE_SQUARE);
 }
 
 void gfxCameraSetViewLookat(GFXcamera* camera, vec3 from, vec3 to) { // redo with vectors
@@ -79,7 +94,6 @@ GFXcamera* gfxGetCamera() {
 void gfxSetCamera(GFXcamera* camera) {
 	ACTIVE_CAMERA = camera;
 }
-
 
 GFXmesh gfxMeshStart(int format) {
 	GFXmesh mesh = {0, 0, format};
@@ -148,11 +162,24 @@ GFXmesh gfxGenerateRect(float w, float h) {
 	return mesh;
 }
 
+void gfxGeneratePrimitives() {
+	MESH_PRIMITIVE_SQUARE =   gfxGenerateRect(1.0f, 1.0f);
+	MESH_PRIMITIVE_TRIANGLE = gfxGenerateTri(1.0f, 1.0f);
+}
+
+GFXmesh gfxGetPrimitiveSquare() {
+	return MESH_PRIMITIVE_SQUARE;
+}
+
+GFXmesh gfxGetPrimitiveTriangle() {
+	return MESH_PRIMITIVE_TRIANGLE;
+}
+
 GFXtexture gfxLoadTexture(char* filepath, GLint format) {
 
 	GFXtexture tex;
-	glGenTextures(1, &tex.texture);
-	glBindTexture(GL_TEXTURE_2D, tex.texture);
+	glGenTextures(1, &tex.id);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
  
  	// CONSIDER stbi_load_from_callbacks(); !!!!!!!!!!!!!!!!
 	unsigned char* img_data = stbi_load(filepath, &tex.width, &tex.height, &tex.n_channels, 0);
@@ -168,8 +195,38 @@ GFXtexture gfxLoadTexture(char* filepath, GLint format) {
 	return tex;
 }
 
+GFXtexture gfxLoadTextureCharArray(unsigned char* imgdata, GLint format, int width, int height, int n_channels) {
+	GFXtexture tex = {-1, width, height, n_channels};
+	glGenTextures(1, &tex.id);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
+ 
+	glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, imgdata);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// MAKE THIS DEFAULT MORE CUSTOMIZABLE IN FUTURE!!!!
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // for scaling down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // for scaling up
+
+	return tex;
+}
+
 void gfxUnloadTexture(GFXtexture* texture) {
-	glDeleteTextures(1, &texture->texture);
+	glDeleteTextures(1, &texture->id);
+}
+
+GFXsprite gfxQuickCreateSprite(char* filepath, GLint format) {
+	GFXtexture tex_map = gfxLoadTexture(filepath, format);
+	return (GFXsprite){
+		&tex_map,
+		0,0,
+		tex_map.width,
+		tex_map.height
+	};
+}
+
+GFXsprite gfxCreateSprite(GFXtexture* texture_map, int x, int y, int width, int height) {
+	return (GFXsprite){texture_map,x,y,width,height};
 }
 
 void gfxSetShader(GFXshader* shader) {
@@ -239,12 +296,17 @@ void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y) {
 	glUniform2f(unloc, x, y);
 }
 
+void gfxShaderSetUniformVec3(GFXshader* shader, char* name, float x, float y, float z) {
+	int unloc = glGetUniformLocation(shader->program, name);
+	glUniform3f(unloc, x, y, z);
+}
+
 void gfxShaderSetUniformMat4(GFXshader* shader, char* name, mat4 matrix) {
 	int unloc = glGetUniformLocation(shader->program, name);
 	glUniformMatrix4fv(unloc, 1, GL_FALSE, (const float*)matrix); // Does this need to be const?
 }
 
-/*
+
 void gfxSetActiveFTLibrary(FT_Library* ft_l) {
 	ACTIVE_FT_LIBRARY = ft_l;
 }
@@ -253,22 +315,42 @@ FT_Library* gfxGetActiveFTLibrary() {
 	return ACTIVE_FT_LIBRARY;
 }
 
-void gfxLoadFont(char* filepath) {
-	FT_Face* face;
-
+GFXfont gfxLoadFont(char* filepath) {
+	GFXfont font; // Should I be malloc-ing these GFXx's?
 	FT_Face face;
-	if (FT_New_Face(ft, filepath, 0, &face)) {
-		printf("Failed to load font\n");
+	if (FT_New_Face(*ACTIVE_FT_LIBRARY, filepath, 0, &face)) {
+		printf("[E]\t In gfxLoadFont(): Failed t o load font\n");
 		exit(0);
 	}
 
-
 	// Size of font in pixels!
-	FT_Set_Pixel_Sizes(face, 0, 48);
-	
-	
+	FT_Set_Pixel_Sizes(face, 0, 124); // DEFAULT_FONT_SIZE
+
+	// Load the first 128 ascii characters
+	font.index = malloc(sizeof(GFXcharacter) * 128);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Prevents alignment issues https://learnopengl.com/In-Practice/Text-Rendering
+	for (unsigned char i=0;i<128;i++) {
+		if (FT_Load_Char(face, i, FT_LOAD_RENDER)) {
+			printf("[E]\t In gfxLoadFont(): Failed to load glyph/GFXcharacter\n");
+			exit(0);
+		}
+		GFXcharacter c = {
+			gfxLoadTextureCharArray(face->glyph->bitmap.buffer, 
+									GL_RED, 
+									face->glyph->bitmap.width,
+									face->glyph->bitmap.rows, 0), // Sets channels arbitrarily
+			face->glyph->bitmap_left,
+			face->glyph->bitmap_top,
+			face->glyph->advance.x
+		};
+		font.index[(unsigned int)i] = c;
+	}
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // Set unpack alignment back to default  
+	FT_Done_Face(face);
+	return font;
 }
 
+/*
 void gfxSetFont(FT_Face* font) {
 
 }
@@ -276,10 +358,29 @@ void gfxSetFont(FT_Face* font) {
 void gfxSetFontSize(FT_Face* font, float height) {
 	FT_Set_Pixel_Sizes()
 }
+
 */
 
-void gfxDrawText(char* filepath, float x, float y, char* text) {
+void gfxDrawText(GFXfont* font, char* text, float x, float y) {
+	float advance = x;
+	float arb_scale = 0.0001f;
+	float arb_scale2 = 0.005f;
+	char next = text[0];
+	for (int c=1; next != '\0'; c++) {
+		if (next >= 128) next = 127;
+		GFXcharacter gfxc_next = font->index[next];
+		GFXtexture* gfxt_next = &(gfxc_next.texture);
 
+		gfxDrawTexture2DExt(gfxt_next, 
+			advance+(gfxc_next.bearingx)*arb_scale + gfxt_next->width*arb_scale2/2, 
+			y+(gfxc_next.bearingy)*arb_scale + gfxt_next->height*arb_scale2/2,
+			0.0f, 0.0f, 
+			gfxt_next->width*arb_scale2,
+			gfxt_next->height*arb_scale2);
+		advance += gfxc_next.advance*arb_scale;
+
+		next = text[c];
+	}
 }
 
 void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window) {

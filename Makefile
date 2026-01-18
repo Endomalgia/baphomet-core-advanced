@@ -42,6 +42,9 @@ ${BUILD_DIR}/%.c.o: %.c
 	mkdir -p $(dir $@)
 	${CC} ${CFLAGS} -c $< -o $@
 
+run:
+	./${NAME}
+
 build: ${OBJ}
 	${CC} -o ${NAME} ${OBJ} ${LDFLAGS}
 
@@ -49,4 +52,4 @@ clean:
 	rm -r ${BUILD_DIR}
 	rm ${NAME}
 
-.PHONY: all options clean
+.PHONY: all run options clean
