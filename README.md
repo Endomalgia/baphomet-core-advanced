@@ -9,7 +9,8 @@
 	<ul>
 		<li>GLFW</li>
 		<li>cglm</li>
-		<li>portaudio</li>
+		<li>PortAudio</li>
+		<li>FreeType</li>
 	</ul>
 	<body>
 		<h2>Objectives:</h2>
