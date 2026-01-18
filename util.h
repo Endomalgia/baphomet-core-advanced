@@ -16,6 +16,14 @@
 #include <string.h>
 
 /* macros */
+#ifndef THROW
+#define THROW(...) do { \
+	fprintf(stderr, "[E]\t In %s:%d : ", __FILE__, __LINE__); \
+	fprintf(stderr, __VA_ARGS__); \
+	fprintf(stderr, "\n"); \
+	exit(0); \
+} while (0);
+#endif
 
 /* types */
 typedef struct {
