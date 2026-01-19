@@ -15,7 +15,6 @@
 	<body>
 		<h2>Objectives:</h2>
 		<ul>
-            <li>Change layout for easier use in projects</li>
 			<li>Implementation of shorthand *.si -> sinner *.h file converter</li>
 			<li>Implementation of cimgui for easier debugging</li>
 			<li>Creation of various extensions (PRIO, EXT (mangement of external files & assets), RPG (tiling system))</li>
