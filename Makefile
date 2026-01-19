@@ -7,7 +7,7 @@ VERSION = 0.2
 NAME = baphomet
 
 # Includes and Libs
-INCS = -Iinclude -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/freetype2 -I./
+INCS = -Iinclude -Iinclude/baphomet -I/usr/local/include -I/usr/include/libxml2 -I/usr/include/freetype2 -I./
 LIBS = -L/usr/local/lib64 -lxml2 -lglfw -lGL -lm -lcglm -lpcre -lpng -lsndfile -ldl -logg -lvorbis -lportaudio -lpthread -lSDL3 -lfreetype
 
 # Flags
@@ -23,7 +23,7 @@ ARCHITECTURE = $(shell uname -m)
 BUILD_DIR := ./build
 
 # Files to manipulate
-SRC := baphomet.c ring.c gfx.c glad.c util.c aud.c
+SRC := baphomet.c src/ring.c src/gfx.c src/glad.c src/util.c src/aud.c
 OBJ := $(SRC:%=$(BUILD_DIR)/%.o)
 
 all: options ${SO} build
