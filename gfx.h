@@ -138,7 +138,7 @@ GFXsprite gfxCreateSprite(GFXtexture* texture_map, int x, int y, int width, int 
 void gfxSetShader(GFXshader* shader);
 GFXshader* gfxGetShader();
 GFXshader gfxQuickCreateShader(char* vshader_fp, char* fshader_fp);
-GFXshader gfxCreateShader(GFXsfrag* fragments, int n_frags); 
+GFXshader gfxCreateShader(GFXsfrag* fragments, int n_frags);
 GFXsfrag gfxBuildShaderFragment(char* filepath, GLenum shader_type);
 void gfxShaderSetUniformVec2(GFXshader* shader, char* name, float x, float y);
 void gfxShaderSetUniformVec3(GFXshader* shader, char* name, float x, float y, float z);
@@ -149,7 +149,7 @@ void gfxSetActiveFTLibrary(FT_Library* ft_l);
 FT_Library* gfxGetActiveFTLibrary();
 GFXfont gfxLoadFont(char* filepath);
 
-void gfxDrawText(GFXfont* font, char* text, float x, float y);
+void gfxDrawText(GFXfont* font, char* text, float x, float y, float scale);
 
 /*
 void gfxLoadFont(char* filepath);

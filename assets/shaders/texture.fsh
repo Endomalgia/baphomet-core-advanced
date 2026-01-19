@@ -22,12 +22,13 @@ void main()
                 if (((i / 1000.0f) - TexCoord.x >= 0.0f) || ((i / 1000.0f) - TexCoord.y >= 0.0f)) {
                    return;
                 }
-                FragColor = vec4(1.0f, 1.0f, 0.0f, 10.0f / i);
+                FragColor = vec4(1.0f, 0.0f, 0.0f, 10.0f / i);
                 return;
             }
         }
     }
+    FragColor = vec4(FragColor.r,FragColor.r,FragColor.r,FragColor.a);
 
     //FragColor = vec4(0.18f, 0.53f, 0.84f, 1.0f);
     //FragColor = vec4(TexCoord.x, TexCoord.y, 1.0f, 1.0f);
-}  
+}

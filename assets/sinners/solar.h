@@ -13,11 +13,11 @@ int script_solar(void* oid, uint8_t event_flag) {
 	static struct data_solar* dat = NULL;
 
 	CREATE:
-		dat = ((Sin*)oid)->data = malloc(sizeof(struct data_solar)); 
+		dat = ((Sin*)oid)->data = malloc(sizeof(struct data_solar));
 
 		dat->t_sun = gfxLoadTexture("assets/sprites/sun.png", GL_RGBA);
 		dat->t_moon = gfxLoadTexture("assets/sprites/moon.png", GL_RGBA);
-		
+
 		return 0;
 	STEP:
 		float x = sin(glfwGetTime()*1.2312f)*1.0f;
@@ -27,8 +27,8 @@ int script_solar(void* oid, uint8_t event_flag) {
 			y = cos(glfwGetTime()*15.0f)*1.0f;
 		}
 
-		gfxDrawTexture2D(&(dat->t_moon), x, y, 0.0005f);
-		gfxDrawTexture2D(&(dat->t_sun), 0.0f, 0.0f, 0.001f);
+		gfxDrawTexture2D(&(dat->t_moon), x - 0.1f, y + 0.1f, 0.2f);
+		gfxDrawTexture2D(&(dat->t_sun), -0.75f, 0.75f, 1.5f);
 
 		return 0;
 	DESTROY:

@@ -22,6 +22,8 @@
 #include <GLFW/glfw3.h>
 #include <portaudio.h>
 
+#include <unistd.h>
+
 /* core includes */
 #include "util.h"
 #include "gfx.h"
@@ -135,9 +137,13 @@ int main(int argc, char* argv[]) {
   AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
   //audSoundPlay(wave, false);
 
+	int fps_mon_index = 0;
+	int fps_mon[50];
+
+	double FRAME_TIME = 1.0 / 30.0; // 30fps
 	double PROGRAM_TIME = glfwGetTime();
+	double DELTA_TIME = 0;
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
-		double DELTA_TIME = PROGRAM_TIME - glfwGetTime();
 
 		//glClearColor(0.7176f, 0.1098f, 0.1098f, 1.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -153,22 +159,47 @@ int main(int argc, char* argv[]) {
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", GLM_MAT4_IDENTITY);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", GLM_MAT4_IDENTITY);
 
+
 		float f_in = 0.5f;
 		float f_sp = 0.4f;
-		gfxDrawText(&f_silbi, "Hello!\0", -0.9f, f_in);
-		gfxDrawText(&f_silbi, "How's\0", -0.775f, f_in-f_sp*1);
-		gfxDrawText(&f_silbi, "your\0", -0.6f, f_in-f_sp*2);
-		gfxDrawText(&f_silbi, "day?\0", -0.6f, f_in-f_sp*3);
+		gfxDrawText(&f_silbi, "Goodmorning!\0", -0.775f, f_in + 0.1, 0.002f);
+		gfxDrawText(&f_silbi, "How's\0", -0.775f, f_in-f_sp*1, 0.005f);
+		gfxDrawText(&f_silbi, "your\0", -0.6f, f_in-f_sp*2, 0.005f);
+		gfxDrawText(&f_silbi, "day?\0", -0.6f, f_in-f_sp*3, 0.005f);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
 
 		glfwSwapBuffers(gfxGetActiveWindow());
 		glfwPollEvents();
-
-	if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(gfxGetActiveWindow(), GL_TRUE);
     }
+
+		double TIME = glfwGetTime();
+		double DELTA_TIME = TIME - PROGRAM_TIME;
+		PROGRAM_TIME = TIME;
+
+		/*
+		if (DELTA_TIME < FRAME_TIME) {
+			usleep((FRAME_TIME - DELTA_TIME) * 1000000l);
+			DELTA_TIME = glfwGetTime() - PROGRAM_TIME;
+		}
+		*/
+
+		fps_mon_index++;
+		if (fps_mon_index >= 50) {
+			fps_mon_index = 0;
+		}
+		fps_mon[fps_mon_index] = (int)(1.0f/DELTA_TIME);
+
+		int avg_fps = 0;
+		for (int i=0; i<50; i++) {
+			avg_fps += fps_mon[i];
+		}
+		avg_fps /= 50;
+
+		printf("(%f) [dt] = %f (%d fps)\n",glfwGetTime(),DELTA_TIME,avg_fps);
 	}
 
 	ringExecuteEvent(EVENT_DESTROY);

@@ -48,7 +48,7 @@ void gfxSetTexture(GFXtexture* tex) {
 }
 
 void gfxDrawTexture2D(GFXtexture* texture, float x, float y, float scale) {
-	gfxDrawTexture2DExt(texture, x, y, 0.0f, 0.0f, scale * texture->width, scale * texture->height);
+	gfxDrawTexture2DExt(texture, x, y, 0.0f, 0.0f, scale, scale);
 }
 
 void gfxDrawTexture2DExt(GFXtexture* texture, float x, float y, float depth, float rot, float sx, float sy) {
@@ -179,7 +179,7 @@ GFXtexture gfxLoadTexture(char* filepath, GLint format) {
 	GFXtexture tex;
 	glGenTextures(1, &tex.id);
 	glBindTexture(GL_TEXTURE_2D, tex.id);
- 
+
  	// CONSIDER stbi_load_from_callbacks(); !!!!!!!!!!!!!!!!
 	unsigned char* img_data = stbi_load(filepath, &tex.width, &tex.height, &tex.n_channels, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, img_data);
@@ -198,7 +198,7 @@ GFXtexture gfxLoadTextureCharArray(unsigned char* imgdata, GLint format, int wid
 	GFXtexture tex = {-1, width, height, n_channels};
 	glGenTextures(1, &tex.id);
 	glBindTexture(GL_TEXTURE_2D, tex.id);
- 
+
 	glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, imgdata);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -332,8 +332,8 @@ GFXfont gfxLoadFont(char* filepath) {
 			THROW("Failed to load glyph from font (%d)", face->face_index);
 		}
 		GFXcharacter c = {
-			gfxLoadTextureCharArray(face->glyph->bitmap.buffer, 
-									GL_RED, 
+			gfxLoadTextureCharArray(face->glyph->bitmap.buffer,
+									GL_RED,
 									face->glyph->bitmap.width,
 									face->glyph->bitmap.rows, 0), // Sets channels arbitrarily
 			face->glyph->bitmap_left,
@@ -342,7 +342,7 @@ GFXfont gfxLoadFont(char* filepath) {
 		};
 		font.index[(unsigned int)i] = c;
 	}
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // Set unpack alignment back to default  
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // Set unpack alignment back to default
 	FT_Done_Face(face);
 	return font;
 }
@@ -358,10 +358,8 @@ void gfxSetFontSize(FT_Face* font, float height) {
 
 */
 
-void gfxDrawText(GFXfont* font, char* text, float x, float y) {
+void gfxDrawText(GFXfont* font, char* text, float x, float y, float scale) {
 	float advance = x;
-	float arb_scale = 0.005f;
-	float arb_scale2 = 0.005f;
 	char next = text[0];
 	for (int c=1; next != '\0'; c++) {
 		if (next >= 128) next = 127;
@@ -370,13 +368,13 @@ void gfxDrawText(GFXfont* font, char* text, float x, float y) {
 
 
 
-		gfxDrawTexture2DExt(gfxt_next, 
-			advance+(gfxc_next.bearingx*arb_scale), 
-			y - .1 + (gfxc_next.bearingy)*arb_scale,
-			0.0f, 0.0f, 
-			gfxt_next->width*arb_scale2,
-			gfxt_next->height*arb_scale2);
-		advance += gfxc_next.advance*arb_scale;
+		gfxDrawTexture2DExt(gfxt_next,
+			advance+(gfxc_next.bearingx*scale),
+			y - .1 + (gfxc_next.bearingy)*scale,
+			0.0f, 0.0f,
+			gfxt_next->width*scale,
+			gfxt_next->height*scale);
+		advance += gfxc_next.advance*scale;
 
 		next = text[c];
 	}
