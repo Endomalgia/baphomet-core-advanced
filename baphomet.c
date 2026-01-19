@@ -1,10 +1,9 @@
 /* See LICENSE file for copyright and license details
 *
-*	Baphomet is a simple C game-backend writted using libSDL for the WW
-*	project as well as for learning. Generally, the design philosophy is
-*	to be acessable and fun. So, yeah :3. Code design is roughly based on
-* 	work in the dwm window manager (I just have those files on hand and
-* 	they seem pretty).
+*	Baphomet is a simple C game-backend writted using glfw. Generally, the 
+*	design philosophy is to be acessable and fun. So, yeah :3. Code design 
+*	is roughly based on work in the dwm window manager (I just have those 
+*	files on hand and they seem pretty).
 *
 */
 
