@@ -15,7 +15,7 @@
 	<body>
 		<h2>Objectives:</h2>
 		<ul>
-            <li>Add alpha channel to rendered text</li>
+            <li>-</li>
 		</ul>
 		<img align="center" src="https://github.com/Endometrial/baphomet-core-advanced/blob/main/assets/sprites/screenshot.gif">
 	</body>

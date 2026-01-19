@@ -62,8 +62,8 @@ typedef struct {
 
 typedef struct {
 	GFXtexture 	 texture;
-	unsigned int bearingx;
-	unsigned int bearingy;
+	int 		 bearingx;
+	int 		 bearingy;
 	unsigned int advance;
 } GFXcharacter;
 

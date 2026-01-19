@@ -40,3 +40,32 @@ int script_solar(void* oid, uint8_t event_flag) {
 }
 
 Sin sin_solar = {0,&sin_solar,&script_solar,NULL};
+
+/*
+
+compressed form ->
+
+DATA:
+	GFXtexture t_sun;
+	GFXtexture t_moon;
+
+CREATE:
+	t_sun = gfxLoadTexture("assets/sprites/sun.png", GL_RGBA);
+	t_moon = gfxLoadTexture("assets/sprites/moon.png", GL_RGBA);
+
+STEP:
+	float x = sin(glfwGetTime()*1.2312f)*1.0f;
+	float y = cos(glfwGetTime()*1.2312f)*1.0f;
+	if (glfwGetKey(gfxGetActiveWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+		x = sin(glfwGetTime()*15.0f)*1.0f;
+		y = cos(glfwGetTime()*15.0f)*1.0f;
+	}
+
+	gfxDrawTexture2D(&t_moon, x, y, 0.0005f);
+	gfxDrawTexture2D(&t_sun, 0.0f, 0.0f, 0.001f);
+
+DESTROY:
+	gfxUnloadTexture(&t_sun);
+	gfxUnloadTexture(&t_moon);
+
+*/

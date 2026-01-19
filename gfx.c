@@ -151,11 +151,11 @@ GFXmesh gfxGenerateTri(float b, float h) {
 GFXmesh gfxGenerateRect(float w, float h) {
 	GFXmesh mesh = gfxMeshStart(VERTEX_FORMAT_UV);
 	float vert[4*5] = {
-		-w/2,	 h/2, 0.0f, 0.0f, 0.0f,
-		 w/2,	 h/2, 0.0f, 1.0f, 0.0f,
-		 w/2,	-h/2, 0.0f, 1.0f, 1.0f,
-		-w/2,	-h/2, 0.0f, 0.0f, 1.0f};
-	unsigned int indcs[6] = {3,0,1,1,2,3};
+		0.0,	0.0,  0.0f, 0.0f, 0.0f,
+		0.0,	-h,   0.0f, 0.0f, 1.0f,
+		w,		-h,   0.0f, 1.0f, 1.0f,
+		w,	    0.0,  0.0f, 1.0f, 0.0f};
+	unsigned int indcs[6] = {0,1,2,0,2,3};
 	gfxMeshAddVertices(&mesh, GL_STATIC_DRAW, vert, 4, indcs, 6);
 	gfxMeshFinish(&mesh);
 	return mesh;
@@ -338,7 +338,7 @@ GFXfont gfxLoadFont(char* filepath) {
 									face->glyph->bitmap.rows, 0), // Sets channels arbitrarily
 			face->glyph->bitmap_left,
 			face->glyph->bitmap_top,
-			face->glyph->advance.x
+			face->glyph->advance.x >> 6 // Value is given in 1/64 pixels for some reason(?)
 		};
 		font.index[(unsigned int)i] = c;
 	}
@@ -360,7 +360,7 @@ void gfxSetFontSize(FT_Face* font, float height) {
 
 void gfxDrawText(GFXfont* font, char* text, float x, float y) {
 	float advance = x;
-	float arb_scale = 0.0001f;
+	float arb_scale = 0.005f;
 	float arb_scale2 = 0.005f;
 	char next = text[0];
 	for (int c=1; next != '\0'; c++) {
@@ -368,9 +368,11 @@ void gfxDrawText(GFXfont* font, char* text, float x, float y) {
 		GFXcharacter gfxc_next = font->index[next];
 		GFXtexture* gfxt_next = &(gfxc_next.texture);
 
+
+
 		gfxDrawTexture2DExt(gfxt_next, 
-			advance+(gfxc_next.bearingx)*arb_scale + gfxt_next->width*arb_scale2/2, 
-			y+(gfxc_next.bearingy)*arb_scale + gfxt_next->height*arb_scale2/2,
+			advance+(gfxc_next.bearingx*arb_scale), 
+			y - .1 + (gfxc_next.bearingy)*arb_scale,
 			0.0f, 0.0f, 
 			gfxt_next->width*arb_scale2,
 			gfxt_next->height*arb_scale2);

@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
 
 	ringExecuteEvent(EVENT_CREATE);
 
-	GFXfont f_silbi = gfxLoadFont("assets/fonts/appsilbi.ttf");
+	GFXfont f_silbi = gfxLoadFont("assets/fonts/nerd.ttf");
 
 	GFXshader default_shader = gfxQuickCreateShader("assets/shaders/texture.vsh","assets/shaders/texture.fsh");
 	gfxSetShader(&default_shader);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
   glUseProgram(gfxGetShader()->program);
 
   AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
-  audSoundPlay(wave, false);
+  //audSoundPlay(wave, false);
 
 	double PROGRAM_TIME = glfwGetTime();
 	while (!glfwWindowShouldClose(gfxGetActiveWindow())) {
@@ -145,12 +145,20 @@ int main(int argc, char* argv[]) {
 
 		gfxShaderSetUniformVec3(gfxGetShader(), "scale", 1.0f, 1.0f, 1.0f);
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		ringExecuteEvent(EVENT_STEP);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", GLM_MAT4_IDENTITY);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", GLM_MAT4_IDENTITY);
 
-		gfxDrawText(&f_silbi, "hello!\0", -1.0f, -1.0f);
+		float f_in = 0.5f;
+		float f_sp = 0.4f;
+		gfxDrawText(&f_silbi, "Hello!\0", -0.9f, f_in);
+		gfxDrawText(&f_silbi, "How's\0", -0.775f, f_in-f_sp*1);
+		gfxDrawText(&f_silbi, "your\0", -0.6f, f_in-f_sp*2);
+		gfxDrawText(&f_silbi, "day?\0", -0.6f, f_in-f_sp*3);
 
 		gfxShaderSetUniformMat4(gfxGetShader(), "view", gfxGetCamera()->view_mat);
 		gfxShaderSetUniformMat4(gfxGetShader(), "projec", gfxGetCamera()->proj_mat);
