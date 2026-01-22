@@ -18,6 +18,8 @@
 			<li>Implementation of shorthand *.si -> sinner *.h file converter</li>
 			<li>Implementation of cimgui for easier debugging</li>
 			<li>Creation of various extensions (PRIO, EXT (mangement of external files & assets), RPG (tiling system))</li>
+			<li>Implement obj loading</li>
+			<li>Loading system for larger assets</li>
 		</ul>
 		<img align="center" src="https://github.com/Endometrial/baphomet-core-advanced/blob/main/assets/sprites/screenshot.gif">
 	</body>
