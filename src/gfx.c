@@ -385,5 +385,12 @@ void _DEFAULT_WINDOW_CLOSE_CALLBACK(GLFWwindow* window) {
 }
 
 void _DEFAULT_FRAMEBUFFER_CALLBACK(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height); // Directly scales window when resized :3
+	float w_res = (float)width / (float)height;
+	if (w_res > DEFAULT_RESOLUTION) {
+		int r_wid = (int)((float)height*DEFAULT_RESOLUTION);
+		glViewport((width - r_wid)/2, 0, r_wid, height);
+		return;
+	}
+	int r_hei = (int)((float)width/DEFAULT_RESOLUTION);
+	glViewport(0, (height - r_hei)/2, width, r_hei);
 }

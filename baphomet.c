@@ -23,6 +23,9 @@
 
 #include <unistd.h>
 
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include <cimgui.h>
+
 /* core includes */
 #include "util.h"
 #include "gfx.h"
@@ -68,7 +71,7 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state) {
   return 0;
 }
 
-struct argp argp = { argp_program_options, parse_opt, argp_program_args_desc, argp_program_desc };
+struct argp argp = { ARGP_PROGRAM_OPTIONS, parse_opt, ARGP_PROGRAM_ARGS_DESC, ARGP_PROGRAM_DESC };
 int main(int argc, char* argv[]) {
 	struct commandline_args cmd_args = {.debug = 0, .quiet = 0};
 
@@ -79,8 +82,8 @@ int main(int argc, char* argv[]) {
 	if (!glfwInit())
 		fprintf(stderr, "[E]\t In main(): Failed to initialize glfw :(\n"); // REPLACE ALL OF THESE WITH LOG EVENTUALLY
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MINOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_MAJOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_MINOR);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	#ifdef __APPLE__
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -118,8 +121,8 @@ int main(int argc, char* argv[]) {
 	static Sin* room_solar[] = {&sin_solar, &sin_camera};
 	ringAppendSins(room_solar, 2);
 
-	gfxQuickWindowCreate(default_window_width, default_window_height, default_window_name);
-	glViewport(0, 0, default_window_width, default_window_height);	// Create a window and viewport of the windows size
+	gfxQuickWindowCreate(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_NAME);
+	//glViewport(0, 0, DEFAULT_RESOLUTION_X, DEFAULT_RESOLUTION_Y);	// Create a window and viewport of the windows size
 
 	/* Generate mesh primitives */
 	gfxGeneratePrimitives();
@@ -134,7 +137,7 @@ int main(int argc, char* argv[]) {
   glUseProgram(gfxGetShader()->program);
 
   AUDsfx* wave = audLoadSfx("assets/sfx/kernel.wav");
-  //audSoundPlay(wave, false);
+  audSoundPlay(wave, false);
 
 	int fps_mon_index = 0;
 	int fps_mon[50];

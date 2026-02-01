@@ -67,7 +67,7 @@ AUDsfx* audLoadSfx(char* filepath) {
 	}
 	Param_OUT->channelCount = sfx->soundfile_info.channels;
 
-	// Default frame length (4096) is here
+	// Default frame length (4096) is here. Shorting this seems to make things marginally quicker?
 	PaError err = Pa_OpenStream(&(sfx->stream), NULL, Param_OUT, sfx->rate, 4096, paClipOff, _DEFAULT_CALLBACK_LIBSNDFILE, sfx->user_data);
 	if (err != paNoError)
 		THROW("Unable to open audio stream from file %s\n\t%s",filepath,Pa_GetErrorText(err))
